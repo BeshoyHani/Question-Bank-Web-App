@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import HttpError from "../models/http-error.js";
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -28,13 +29,10 @@ const User = mongoose.model('user', userSchema);
 
 export const findUser = async (username) => {
     try {
-        await mongoose.connect(process.env.mongoURI);
         const user = await User.findOne({ username: username });
-        mongoose.disconnect();
         return user;
     } catch (error) {
-        mongoose.disconnect();
-        throw new Error(error);
+        throw new HttpError(error.message, 500);
     }
 }
 
@@ -43,7 +41,7 @@ export const findAllUsers = async () => {
         const users = await User.find();
         return users;
     } catch (error) {
-        throw new Error(error);
+        throw new HttpError(error.message, 500);
     }
 }
 
@@ -54,13 +52,10 @@ export const createUser = async (username, password, userType) => {
             password,
             userType
         });
-        await mongoose.connect(process.env.mongoURI);
         await user.save();
-        mongoose.disconnect();
         return user;
     } catch (error) {
-        mongoose.disconnect();
-        throw new Error(error);
+        throw new HttpError(error.message, 500);
     }
 }
 
@@ -68,6 +63,6 @@ export const deleteUser = async (username) => {
     try {
         const users = await User.deleteOne({ username: username });
     } catch (error) {
-        throw new Error(error);
+        throw new HttpError(error.message, 500);
     }
 }

@@ -1,11 +1,15 @@
 import { createUser, findUser } from "./users.model.js";
 import bcrypt from 'bcrypt';
 import Jwt from "jsonwebtoken";
+import HttpError from "../models/http-error.js";
 
-export const login = async (req, res, next) => {
+export const login = async (req, res) => {
     const { username, password } = req.body;
     try {
         const user = await findUser(username);
+        if (!user) {
+            throw new HttpError('User doesn\'t exist', 404);
+        }
         const hashed_pwd = user.password;
         const is_correct_pwd = await bcrypt.compare(password, hashed_pwd);
         if (is_correct_pwd) {
@@ -13,20 +17,24 @@ export const login = async (req, res, next) => {
                 userID: user._id,
                 username: user.username,
                 userType: user.userType
-            }, process.env.TOKEN_SECRET);
+            }, process.env.TOKEN_SECRET,
+                {
+                    expiresIn: '1h'
+                });
             res.status(200).json({
                 userType: user.userType,
                 token: token
             });
         } else {
-            return next('Password is not correct');
+            const error = new HttpError('Password is not correct', 401);
+            res.status(error.code).json({ error: error.message });
         }
     } catch (error) {
-        return next(error);
+        res.status(error.code).json({ error: error.message });
     }
 }
 
-export const signup = async (req, res, next) => {
+export const signup = async (req, res) => {
     const { username, password, userType } = req.body;
     try {
         const salt_rounds = +(process.env.SALT_ROUNDS);
@@ -36,13 +44,16 @@ export const signup = async (req, res, next) => {
             userID: user._id,
             username: user.username,
             userType: user.userType
-        }, process.env.TOKEN_SECRET);
+        }, process.env.TOKEN_SECRET,
+            {
+                expiresIn: '1h'
+            });
         res.status(200).json({
             userType: user.userType,
             token: token
         });
 
     } catch (error) {
-        return next(error);
+        res.status(error.code).json({ error: error.message });
     }
 }
