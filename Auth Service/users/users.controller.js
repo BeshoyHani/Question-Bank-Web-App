@@ -65,7 +65,7 @@ export const signup = async (req, res) => {
 }
 
 export const verify = (req, res) => {
-    if (req.user)
+    if (Object.keys(req.user).length !== 0 )
         res.status(200).json({
             message: 'Valid Credentials',
             user: req.user

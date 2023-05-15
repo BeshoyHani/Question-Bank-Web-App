@@ -6,7 +6,8 @@ import {
 
 export const makeQuestion = async (req, res) => {
     const { name, category, subcategory, mark, expectedTime, answers, correctAnswers } = req.body;
-    let createdBy = "1"
+    const createdBy = req.user.userID;
+    console.log(createdBy)
     try {
         const question = await createQuestion(name, category, subcategory, mark, expectedTime, correctAnswers, createdBy, answers);
         res.status(200).json({ message: 'Question Created Successfully', question });
@@ -38,9 +39,14 @@ export const findAllQuestions = async (req, res) => { //params for pageNo & quer
 
 export const editQuestion = async (req, res) => { //params
     const { id, name, category, subcategory, mark, expectedTime } = req.body;
+    const userID = req.user.userID;
     try {
-        const question = await updateQuestion(id, name, category, subcategory, mark, expectedTime);
-        res.status(200).json({ message: 'Question Updated Successfully', question });
+        const question = await getQuestionById(id);
+        if (question.createdBy !== userID) {
+            throw new HttpError('Unauthorized Access', 401);
+        }
+        const updatedQuestion = await updateQuestion(id, name, category, subcategory, mark, expectedTime);
+        res.status(200).json({ message: 'Question Updated Successfully', updatedQuestion });
     } catch (error) {
         res.status(error.code).json({ message: error.message });
     }
@@ -58,9 +64,14 @@ export const removeQuestion = async (req, res) => { //params
 
 export const addAnswerToQuestion = async (req, res) => {
     const { questionID, answerID, answerName, answerDescription } = req.body;
+    const userID = req.user.userID;
     try {
-        const question = await addnewAnswer(questionID, answerID, answerName, answerDescription);
-        res.status(200).json({ message: 'Answer Added Successfully', question });
+        const question = await getQuestionById(id);
+        if (question.createdBy !== userID) {
+            throw new HttpError('Unauthorized Access', 401);
+        }
+        const updatedQuestion = await addnewAnswer(questionID, answerID, answerName, answerDescription);
+        res.status(200).json({ message: 'Answer Added Successfully', updatedQuestion });
     } catch (error) {
         res.status(error.code).json({ message: error.message });
     }
@@ -68,9 +79,14 @@ export const addAnswerToQuestion = async (req, res) => {
 
 export const removeAnswerFromQuestion = async (req, res) => {
     const { questionID, answerID } = req.body;
+    const userID = req.user.userID;
     try {
-        const question = await deleteAnswer(questionID, answerID);
-        res.status(200).json({ message: 'Answer Deleted Successfully', question });
+        const question = await getQuestionById(id);
+        if (question.createdBy !== userID) {
+            throw new HttpError('Unauthorized Access', 401);
+        }
+        const updatedQuestion = await deleteAnswer(questionID, answerID);
+        res.status(200).json({ message: 'Answer Deleted Successfully', updatedQuestion });
     } catch (error) {
         res.status(error.code).json({ message: error.message });
     }
