@@ -1,28 +1,24 @@
 
+import  Jwt  from 'jsonwebtoken';
 export const verifyUser = (req, res, next) => {
     try {
-        const data = decodeToken(req.headers.authorization);
-        console.log(data)
-        const username = data.username;
-        req.username = username;
+        const token = req.headers.authorization || req.body.token;
+        const data = decodeToken(token);
+        const { username, userID, userType } = data;
+        req.user = {
+            userID,
+            username,
+            userType
+        };
         next();
     } catch (error) {
-        res.status(401).end('Unauthorized Access');
+        req.user = {};
+        next();
     }
 }
 
-export const getUserID = (req, res, next) => {
-    if (req.headers.authorization) {
-        const data = decodeToken(req.headers.authorization);
-        const username = data.username;
-        req.username = username;
-    }
-
-    next();
-}
-
-const decodeToken = (auth)=> {
+const decodeToken = (auth) => {
     const token = auth.split(' ')[1];
-    const data = jwt.verify(token, process.env.TOKEN_SECRET);
+    const data = Jwt.verify(token, process.env.TOKEN_SECRET);
     return data;
 }

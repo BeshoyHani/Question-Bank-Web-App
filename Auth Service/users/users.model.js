@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import HttpError from "../models/http-error.js";
+import _ from 'lodash';
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -29,7 +30,7 @@ const User = mongoose.model('user', userSchema);
 
 export const findUser = async (username) => {
     try {
-        const user = await User.findOne({ username: username });
+        const user = await User.findOne({ username: _.lowerCase(username) });
         return user;
     } catch (error) {
         throw new HttpError(error.message, 500);
@@ -46,6 +47,7 @@ export const findAllUsers = async () => {
 }
 
 export const createUser = async (username, password, userType) => {
+    username = _.lowerCase(username);
     try {
         const user = new User({
             username,
@@ -60,6 +62,7 @@ export const createUser = async (username, password, userType) => {
 }
 
 export const deleteUser = async (username) => {
+    username = _.lowerCase(username);
     try {
         const users = await User.deleteOne({ username: username });
     } catch (error) {
