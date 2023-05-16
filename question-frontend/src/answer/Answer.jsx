@@ -2,13 +2,13 @@ import InputField from "../common/InputField";
 
 export default function Answer({ index, answer, onAnswerChange }) {
     return (
-        <div>
+        <div className='d-flex'>
             <InputField
                 id={`ans${index}ID`}
                 type="text"
                 name={`ansID`}
                 label="Answer ID"
-                placeholder="1"
+                placeholder={index+1}
                 value={answer.ansID}
                 onChange={(event) => { onAnswerChange(event, index) }} />
             <InputField

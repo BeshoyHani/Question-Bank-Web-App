@@ -1,4 +1,4 @@
-div {
+div.d-flex {
     width: 100%;
     display: flex;
     justify-content: center;
@@ -7,20 +7,27 @@ div {
 
 .input-container {
     margin: 0px 15px;
-    justify-content:right;
+    display: flex;
+    width: 100%;
+    justify-content: right;
+    align-items: center;
 }
 
-div.container {
-    border-radius: 5px;
+.container {
+    border-radius: 15px;
     display: inline-block;
-    background-color: #f2f2f2;
+    /*background-color: #f2f2f2;*/
+    background-color: white;
     padding: 20px;
-    margin: 20px;
+    margin:8%;
     width: 80%;
 }
 
-input[type=text] {
+input.w70 {
     width: 70%;
+}
+
+input[type=text].d-block {
     padding: 12px 20px;
     margin: 8px 5px;
     display: inline-block;
@@ -34,6 +41,6 @@ label {
 
 }
 
-hr{
+hr {
     margin: 50px 20%;
 }

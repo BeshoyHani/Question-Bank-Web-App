@@ -49,7 +49,7 @@ export default function Question() {
     return (
         <div className='container'>
             <form>
-                <div>
+                <div className='d-flex'>
                     <InputField id="qName" type="text" name="qName" label="Question Name" placeholder="Question Name"
                         value={question.qName} onChange={handleQuestionChange} />
                     <InputField id="qMark" type="text" name="qMark" label="Mark" placeholder="0"
@@ -57,7 +57,7 @@ export default function Question() {
 
                 </div>
 
-                <div>
+                <div className='d-flex'>
                     <InputField id="qCategory" type="text" name="qCategory" label="Category" placeholder="Multiple Choice"
                         value={question.qCategory} onChange={handleQuestionChange} />
                     <InputField id="qSubCategory" type="text" name="qSubCategory" label="Sub Category" placeholder="HPC"
@@ -65,7 +65,7 @@ export default function Question() {
 
                 </div>
 
-                <div>
+                <div className='d-flex'>
                     <InputField id="qExpectedTime" type="text" name="qExpectedTime" label="Expected Time" placeholder="Time in Seconds"
                         value={question.qExpectedTime} onChange={handleQuestionChange}
                     />
@@ -77,7 +77,7 @@ export default function Question() {
                 <hr />
                 <AnswerList answers={answers} onAddAnswer={addAnswer} handleAnswerChange={handleAnswerChange} />
 
-                <div>
+                <div className='d-flex'>
                     <Fab variant="extended" color="success" aria-label="add" sx={{ mt: 3 }}>
                         Create
                     </Fab>

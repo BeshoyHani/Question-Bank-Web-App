@@ -6,7 +6,7 @@ import AddIcon from '@mui/icons-material/Add';
 export default function AnswerList({ answers, onAddAnswer, handleAnswerChange }) {
     return (
         answers.map((answer, index) => {
-            return <div key={index} style={{ justifyContent: 'end' }}>
+            return <div className='d-flex' key={index} style={{ justifyContent: 'end' }}>
                 {
                     index === answers.length - 1 &&
                     <div style={{ width: '5%', }}>
