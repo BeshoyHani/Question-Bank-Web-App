@@ -7,7 +7,6 @@ import {
 export const makeQuestion = async (req, res) => {
     const { name, category, subcategory, mark, expectedTime, answers, correctAnswers } = req.body;
     const createdBy = req.user.userID;
-    console.log(createdBy)
     try {
         const question = await createQuestion(name, category, subcategory, mark, expectedTime, correctAnswers, createdBy, answers);
         res.status(200).json({ message: 'Question Created Successfully', question });

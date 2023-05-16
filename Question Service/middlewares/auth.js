@@ -14,18 +14,21 @@ export const verifyUserCredentials = async (req, res, next) => {
         req.user = data.user;
         next();
     }).catch(error => {
-        res.status(error.response.status).json({message: error.response.data.message});
+        res.status(error.response.status).json({ message: error.response.data.message });
     });
 }
 
-export const verifyUserType = ([types]) => {
+export const verifyUserType = (types) => {
     return (req, res, next) => {
+        let error = false;
         types.forEach(type => {
             if (req.user.userType !== type) {
                 res.status(401).json({ message: 'Unauthorized Access' });
+                error = true;
                 return;
             }
         });
-        next();
+        if (!error)
+            next();
     }
 }

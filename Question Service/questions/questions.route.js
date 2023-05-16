@@ -13,10 +13,10 @@ router.get('/all',
     findAllQuestions);
 
 router.get('/:questionID',
-    verifyUserType([userType.TEACHER]),
     findQuestion);
 
 router.post('/create',
+    verifyUserType([userType.TEACHER]),
     makeQuestion);
 
 router.post('/update',
