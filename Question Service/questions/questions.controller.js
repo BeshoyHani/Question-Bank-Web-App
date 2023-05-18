@@ -52,12 +52,15 @@ export const editQuestion = async (req, res) => { //params
 }
 
 export const removeQuestion = async (req, res) => { //params
-    const { questionID } = req.params;
+    const { id } = req.body;
     try {
-        const question = await deleteQuestion(questionID);
+        const question = await deleteQuestion(id);
         res.status(200).json({ message: 'Question Deleted Successfully', question });
     } catch (error) {
-        res.status(error.code).json({ message: error.message });
+        res.status(error.code).json({
+            message: error.message,
+            question: question
+        });
     }
 }
 

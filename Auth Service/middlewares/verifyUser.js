@@ -1,6 +1,6 @@
 
-import  Jwt  from 'jsonwebtoken';
-export const verifyUser = (req, res, next) => {
+import Jwt from 'jsonwebtoken';
+export const verifyUserCredintials = (req, res, next) => {
     try {
         const token = req.headers.authorization || req.body.token;
         const data = decodeToken(token);
@@ -15,6 +15,16 @@ export const verifyUser = (req, res, next) => {
         req.user = {};
         next();
     }
+}
+
+export const verifyUserType = (types) => {
+    return (req, res, next) => {
+        const user = types.find(type => req.user.userType === type);
+        if (!user) {
+            res.status(401).json({ message: 'Unauthorized Access' });
+        } else
+            return next();
+    };
 }
 
 const decodeToken = (auth) => {

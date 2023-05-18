@@ -37,7 +37,7 @@ export const findUser = async (username) => {
     }
 }
 
-export const findAllUsers = async () => {
+export const findAllUsers = async (req, res) => {
     try {
         const users = await User.find();
         return users;
@@ -61,10 +61,21 @@ export const createUser = async (username, password, userType) => {
     }
 }
 
+export const updateUser = async (username, userType) => {
+    try {
+        const user = User.findOneAndUpdate({username: username},
+            { userType: userType },
+            { new: true });
+        return user;
+    } catch (error) {
+        throw new HttpError(error.message, 500);
+    }
+}
+
 export const deleteUser = async (username) => {
     username = _.lowerCase(username);
     try {
-        const users = await User.deleteOne({ username: username });
+        const users = await User.findOneAndDelete({ username: username });
     } catch (error) {
         throw new HttpError(error.message, 500);
     }

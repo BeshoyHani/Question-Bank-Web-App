@@ -1,10 +1,20 @@
 import { Router } from "express";
-import { login, signup, verify } from "./users.controller.js";
-import { verifyUser } from "../middlewares/verifyUser.js";
-const router = Router();
+import { verifyUserCredintials, verifyUserType } from "../middlewares/verifyUser.js";
+import userType from "../models/userType.js";
+import { getAllUsers, getUser, removeUser, updateUserType } from "./users.controller.js";
+const userRouter = Router();
 
-router.post('/login', login);
-router.post('/signup', verifyUser, signup);
-router.post('/verify', verifyUser, verify)
+userRouter.get('/all', getAllUsers);
 
-export default router;
+userRouter.get('/:username', getUser);
+userRouter.post('/update',
+    verifyUserCredintials,
+    verifyUserType([userType.ADMIN, userType.SUPER_ADMIN]),
+    updateUserType);
+
+userRouter.post('/delete',
+    verifyUserCredintials,
+    verifyUserType([userType.ADMIN, userType.SUPER_ADMIN]),
+    removeUser);
+
+export default userRouter;

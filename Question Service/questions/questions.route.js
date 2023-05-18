@@ -23,7 +23,7 @@ router.post('/update',
     verifyUserType([userType.TEACHER]),
     editQuestion);
 
-router.post('/delete/:questionID',
+router.post('/delete',
     verifyUserType([userType.ADMIN]),
     removeQuestion);
 

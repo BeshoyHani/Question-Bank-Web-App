@@ -3,20 +3,21 @@ import InputField from '../common/InputField';
 import AnswerList from '../answer/AnswerList';
 import { useState } from 'react';
 import { Fab } from '@mui/material';
+import { createQuestion } from './QuestionAPI';
 
 export default function Question() {
     const [answers, setAnswers] = useState([{
-        ansID: '',
-        ansName: '',
-        ansDescription: ''
+        id: 1,
+        name: '',
+        description: ''
     }]);
     const [question, setQuestion] = useState({
-        qName: '',
-        qMark: '',
-        qCategory: '',
-        qSubCategory: '',
-        qExpectedTime: '',
-        qCorrectAnswers: []
+        name: '',
+        mark: 0,
+        category: '',
+        subCategory: '',
+        expectedTime: '',
+        correctAnswers: []
     });
 
     const handleAnswerChange = (event, index) => {
@@ -31,7 +32,7 @@ export default function Question() {
         setAnswers(answerArray);
     }
 
-    const addAnswer = (event) => {
+    const addAnswer = () => {
         const answer = {
             ansID: '',
             ansName: '',
@@ -41,35 +42,50 @@ export default function Question() {
     }
 
     const handleQuestionChange = (event) => {
-        console.log(question)
         const { name, value } = event.target;
         setQuestion({ ...question, [name]: value });
     }
 
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        const { name, category, subcategory, mark, expectedTime } = question;
+        try {
+            for (const prop in question) {
+                if (question[prop].length === 0) {
+                    throw new Error('All Fields are Required.');
+                }
+            }
+            const correctAnswers = question.correctAnswers.split(',');
+            await createQuestion(name, category, subcategory, mark, expectedTime, answers, correctAnswers);
+        } catch (error) {
+            event.preventDefault();
+            console.log(error.message)
+        }
+    }
     return (
         <div className='container'>
             <form>
                 <div className='d-flex'>
-                    <InputField id="qName" type="text" name="qName" label="Question Name" placeholder="Question Name"
+                    <InputField id="qName" type="text" name="name" label="Question Name" placeholder="Question Name"
                         value={question.qName} onChange={handleQuestionChange} />
-                    <InputField id="qMark" type="text" name="qMark" label="Mark" placeholder="0"
+                    <InputField id="qMark" type="text" name="mark" label="Mark" placeholder="0"
                         value={question.qMark} onChange={handleQuestionChange} />
 
                 </div>
 
                 <div className='d-flex'>
-                    <InputField id="qCategory" type="text" name="qCategory" label="Category" placeholder="Multiple Choice"
+                    <InputField id="qCategory" type="text" name="category" label="Category" placeholder="Multiple Choice"
                         value={question.qCategory} onChange={handleQuestionChange} />
-                    <InputField id="qSubCategory" type="text" name="qSubCategory" label="Sub Category" placeholder="HPC"
+                    <InputField id="qSubCategory" type="text" name="subCategory" label="Sub Category" placeholder="HPC"
                         value={question.qSubCategory} onChange={handleQuestionChange} />
 
                 </div>
 
                 <div className='d-flex'>
-                    <InputField id="qExpectedTime" type="text" name="qExpectedTime" label="Expected Time" placeholder="Time in Seconds"
+                    <InputField id="qExpectedTime" type="text" name="expectedTime" label="Expected Time" placeholder="Time in Seconds"
                         value={question.qExpectedTime} onChange={handleQuestionChange}
                     />
-                    <InputField id="qCorrectAnswers" type="text" name="qCorrectAnswers" label="Correct Answers" placeholder=""
+                    <InputField id="qCorrectAnswers" type="text" name="correctAnswers" label="Correct Answers" placeholder="1, 3, 5"
                         value={question.qCorrectAnswers} onChange={handleQuestionChange} />
 
                 </div>
@@ -78,7 +94,7 @@ export default function Question() {
                 <AnswerList answers={answers} onAddAnswer={addAnswer} handleAnswerChange={handleAnswerChange} />
 
                 <div className='d-flex'>
-                    <Fab variant="extended" color="success" aria-label="add" sx={{ mt: 3 }}>
+                    <Fab variant="extended" type='submit' color="success" aria-label="add" sx={{ mt: 3 }} onClick={handleSubmit}>
                         Create
                     </Fab>
                 </div>

@@ -1,4 +1,6 @@
-export default function InputField({ id, name, label, type, placeholder, value, onChange, className }) {
+export default function InputField({ id, name, label, type, placeholder, value, onChange,
+    className, isRequired = true, isDisabled = false }) {
+
     return (
         <div className={className ? className : 'input-container'}>
             <label htmlFor={id}>{label}</label>
@@ -8,7 +10,8 @@ export default function InputField({ id, name, label, type, placeholder, value, 
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
-                required/>
+                required={isRequired}
+                disabled={isDisabled} />
 
         </div>
     );

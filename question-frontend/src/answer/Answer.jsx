@@ -6,15 +6,16 @@ export default function Answer({ index, answer, onAnswerChange }) {
             <InputField
                 id={`ans${index}ID`}
                 type="text"
-                name={`ansID`}
+                name={`id`}
                 label="Answer ID"
-                placeholder={index+1}
-                value={answer.ansID}
+                placeholder={index + 1}
+                value={index + 1}
+                isDisabled={true}
                 onChange={(event) => { onAnswerChange(event, index) }} />
             <InputField
                 id={`ans${index}Name`}
                 type="text"
-                name={`ansName`}
+                name={`name`}
                 label="Answer Name"
                 placeholder="Ball"
                 value={answer.ansName}
@@ -22,7 +23,7 @@ export default function Answer({ index, answer, onAnswerChange }) {
             <InputField
                 id={`ans${index}Description`}
                 type="text"
-                name={`ansDescription`}
+                name={`description`}
                 label="Answer Description"
                 placeholder="description..."
                 value={answer.ansDescription}

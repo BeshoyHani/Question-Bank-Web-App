@@ -3,7 +3,7 @@ import InputField from '../common/InputField';
 import './Auth.css'
 import { useState } from 'react';
 import { login } from './AuthAPI';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -45,6 +45,8 @@ export default function Login() {
                         <Fab variant="extended" type='submit' color="success" aria-label="add" sx={{ mt: 3 }} onClick={handleSubmit}>
                             Login
                         </Fab>
+
+                        <p>Already have an account? <Link to='/signup'>Signup</Link></p>
                     </div>
                 </form>
             </div>
