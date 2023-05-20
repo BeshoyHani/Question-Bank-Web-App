@@ -1,10 +1,9 @@
 import { Route, Routes } from 'react-router-dom';
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import Login from './auth/Login';
 import Signup from './auth/Signup';
 import Question from './question/Question';
-import UserItem from './user/UserItem';
 import UsersList from './user/UsersList';
 import QuestionList from './question/QuestionList';
 import NavBar from './common/NavBar';
@@ -18,16 +17,29 @@ const userType = {
   SUPER_ADMIN: 'SUPER_ADMIN'
 }
 
-
 function App() {
+  const username = localStorage.getItem('username');
+  const [isAuthenticated, setIsAuthenticated] = useState(!!username);
+  const [currentUserType, setUserType]= useState('');
+
   return (
     <React.Fragment>
 
-      <NavBar />
+      {
+        isAuthenticated &&
+        <NavBar userType={currentUserType} setUserType={setUserType} setIsAuthenticated={setIsAuthenticated} />
+      }
+
       <Routes>
         <Route path='/questions/create' exact element={
           <ProtectedRoute allowedRoles={[userType.TEACHER]} child={
-            <Question />
+            <Question isCreate={true} />
+          } />
+        } />
+
+        <Route path='/questions/update/:id' exact element={
+          <ProtectedRoute allowedRoles={[userType.TEACHER]} child={
+            <Question isCreate={false} />
           } />
         } />
 
@@ -45,12 +57,14 @@ function App() {
 
 
         <Route path='/' exact element={
-          <User />
+          <ProtectedRoute allowedRoles={[]} child={
+            <User />
+          } />
         } />
 
         <Route path='/login' exact element={
           <ProtectRegisterationRoute child={
-            <Login />
+            <Login setIsAuthenticated={setIsAuthenticated} setUserType={setUserType} />
           } />
         } />
 

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
     addAnswerToQuestion, editQuestion, findAllQuestions, findQuestion,
+    findQuestionsCount,
     makeQuestion, removeAnswerFromQuestion, removeQuestion
 } from "./questions.controller.js";
 import { verifyUserType } from "../middlewares/auth.js";
@@ -11,6 +12,10 @@ const router = Router();
 router.get('/all',
     verifyUserType([userType.TEACHER, userType.ADMIN, userType.SUPER_ADMIN]),
     findAllQuestions);
+
+router.get('/count',
+    verifyUserType([userType.TEACHER, userType.ADMIN, userType.SUPER_ADMIN]),
+    findQuestionsCount);
 
 router.get('/:questionID',
     findQuestion);

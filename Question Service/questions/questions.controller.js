@@ -1,7 +1,7 @@
 import HttpError from '../models/http-error.js';
 import {
     createQuestion, getAllQuestions, getQuestionById,
-    updateQuestion, deleteQuestion, addnewAnswer, deleteAnswer
+    updateQuestion, deleteQuestion, addnewAnswer, deleteAnswer, getQuestionsCount
 } from './questions.model.js';
 
 export const makeQuestion = async (req, res) => {
@@ -26,28 +26,43 @@ export const findQuestion = async (req, res) => { //params
 }
 
 export const findAllQuestions = async (req, res) => { //params for pageNo & query for quesries
-    const { pageNo } = req.params;
+    const { page } = req.query;
     const { category, createdBy } = req.query;
     try {
-        const questions = await getAllQuestions(category, createdBy, pageNo);
+        const questions = await getAllQuestions(category, createdBy, page);
         res.status(200).json({ message: `Found ${questions.length} Question(s)`, questions });
     } catch (error) {
         res.status(error.code).json({ message: error.message });
     }
 }
 
+export const findQuestionsCount = async (req, res) => {
+    try {
+        const data = await getQuestionsCount();
+        res.status(200).json({
+            message: `Found ${data.count} Question(s)`,
+            count: data.count,
+            questionsPerPage: data.resultsPerPage
+        });
+    } catch (error) {
+        console.log(error.message)
+        res.status(error.code).json({ message: error.message });
+    }
+}
+
 export const editQuestion = async (req, res) => { //params
-    const { id, name, category, subcategory, mark, expectedTime } = req.body;
+    const { id, name, category, subcategory, mark, expectedTime, answers, correctAnswers } = req.body;
     const userID = req.user.userID;
     try {
         const question = await getQuestionById(id);
+        console.log(id)
         if (question.createdBy !== userID) {
             throw new HttpError('Unauthorized Access', 401);
         }
-        const updatedQuestion = await updateQuestion(id, name, category, subcategory, mark, expectedTime);
+        const updatedQuestion = await updateQuestion(id, name, category, subcategory, mark, expectedTime, answers, correctAnswers);
         res.status(200).json({ message: 'Question Updated Successfully', updatedQuestion });
     } catch (error) {
-        res.status(error.code).json({ message: error.message });
+        res.status(error.code || 500 ).json({ message: error.message });
     }
 }
 

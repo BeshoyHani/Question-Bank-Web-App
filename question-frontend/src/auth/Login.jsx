@@ -4,7 +4,10 @@ import './Auth.css'
 import { useState } from 'react';
 import { login } from './AuthAPI';
 import { Link, useNavigate } from 'react-router-dom';
-export default function Login() {
+import TimedModal from '../common/TimedModal';
+
+
+export default function Login({ setIsAuthenticated, setUserType }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [errorMsg, setErrorMsg] = useState('');
@@ -15,16 +18,26 @@ export default function Login() {
         name === 'username' ? setUsername(value) : setPassword(value);
     }
 
+    const setErrorMessage = (msg) => {
+        setErrorMsg(msg);
+        setTimeout(() => setErrorMessage(''), 2000);
+    }
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
             await login(username, password);
             setUsername('');
             setPassword('');
+            setIsAuthenticated(true);
+            setUserType(localStorage.getItem('user-type'));
+            setTimeout(() => {
+                localStorage.clear();
+            }, 1000 * 60 * 60)
             navigate('/');
         } catch (error) {
             setPassword('');
-            setErrorMsg(error.message)
+            setErrorMessage(error.message)
         }
     }
     return (
@@ -40,7 +53,7 @@ export default function Login() {
                     <div className='d-flex row'>
                         {
                             errorMsg.length > 0 &&
-                            <div className='error'>{errorMsg}</div>
+                            <TimedModal time={2000} modalTitle={'Error'} modalMessage={errorMsg} />
                         }
                         <Fab variant="extended" type='submit' color="success" aria-label="add" sx={{ mt: 3 }} onClick={handleSubmit}>
                             Login

@@ -23,6 +23,19 @@ div.d-flex {
     width: 80%;
 }
 
+.question-item-info-p{
+    margin-right: 35px;
+}
+
+.bottom-pagination-container{
+    background-color: rgba(255, 255, 255, 0);
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
 input.w70 {
     width: 70%;
 }

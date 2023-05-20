@@ -12,6 +12,7 @@ export const login = async (username, password) => {
         localStorage.setItem('access_token', res.data.token);
         localStorage.setItem('user-type', res.data.userType);
         localStorage.setItem('username', res.data.username);
+        axios.defaults.headers.Authorization = 'Bearer ' + localStorage.getItem('access_token');
         return res.data;
     } catch (error) {
         throw Error(error.response.data.error);

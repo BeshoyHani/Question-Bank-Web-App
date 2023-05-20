@@ -68,14 +68,14 @@ export const createQuestion = async (name, category, subcategory, mark, expected
 
 export const getQuestionById = async (id) => {
     try {
-        const question = Question.findById(id);
+        const question = await Question.findById(id);
         return question;
     } catch (error) {
         throw new HttpError(error.message, 500);
     }
 }
 
-export const getAllQuestions = async (category='', creator='', pageNo) => {
+export const getAllQuestions = async (category = '', creator = '', pageNo) => {
     try {
         const questions = Question.find(
             {
@@ -116,7 +116,7 @@ export const deleteAnswer = async (questionID, answerID) => {
     }
 }
 
-export const updateQuestion = async (id, name, category, subcategory, mark, expectedTime) => {
+export const updateQuestion = async (id, name, category, subcategory, mark, expectedTime, answers) => {
     try {
         const question = Question.findByIdAndUpdate(id,
             {
@@ -125,7 +125,8 @@ export const updateQuestion = async (id, name, category, subcategory, mark, expe
                     category,
                     subcategory,
                     mark,
-                    expectedTime
+                    expectedTime,
+                    answers
                 }
             },
             { new: true });
@@ -139,6 +140,18 @@ export const deleteQuestion = async (id) => {
     try {
         await Question.findByIdAndDelete(id);
         return;
+    } catch (error) {
+        throw new HttpError(error.message, 500);
+    }
+}
+
+export const getQuestionsCount = async () => {
+    try {
+        const count = await Question.count({});
+        return {
+            count,
+            resultsPerPage
+        }
     } catch (error) {
         throw new HttpError(error.message, 500);
     }

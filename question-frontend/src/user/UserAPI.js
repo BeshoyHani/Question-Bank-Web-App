@@ -1,5 +1,4 @@
 import axios from 'axios';
-axios.defaults.headers.Authorization = 'Bearer ' + localStorage.getItem('access_token') || '';
 const baseURL = 'http://localhost:4000/user';
 
 export const getAllUsers = async () => {

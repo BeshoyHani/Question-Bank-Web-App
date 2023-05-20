@@ -5,9 +5,9 @@ export const ProtectedRoute = ({ child, allowedRoles }) => {
     const myType = localStorage.getItem("user-type");
     const isTypeAllowed = allowedRoles.find(type => type === myType);
 
-    if (isAuthenticated === undefined) {
+    if (!isAuthenticated) {
         return <Navigate to="/login" replace />;
-    } else if (!isTypeAllowed) {
+    } else if (allowedRoles.length !== 0 && !isTypeAllowed) {
         return <Navigate to="/" replace />;;
     }
     else {
@@ -17,7 +17,7 @@ export const ProtectedRoute = ({ child, allowedRoles }) => {
 
 export const ProtectRegisterationRoute = ({ child }) => {
     const isAuthenticated = localStorage.getItem("username");
-    if (isAuthenticated) {
+    if (isAuthenticated !== null) {
         return <Navigate to='/' replace />;
     }
     return child;

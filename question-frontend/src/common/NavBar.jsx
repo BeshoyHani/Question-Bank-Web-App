@@ -6,15 +6,15 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-export default function NavBar() {
-    const [userType, setUserType] = useState(localStorage.getItem('user-type'));
+export default function NavBar({userType, setUserType, setIsAuthenticated}) {
     const navigte = useNavigate();
 
     const logout = () => {
         localStorage.clear();
+        setIsAuthenticated(false);
+        setUserType('');
         navigte('/login');
     }
     return (
@@ -31,12 +31,12 @@ export default function NavBar() {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        LMS
+                        {localStorage.getItem('username')}
                     </Typography>
                     {
                         userType === 'TEACHER' &&
                         <React.Fragment>
-                            <Link to='questions/create' className='link-text'>
+                            <Link to='/questions/create' className='link-text'>
                                 <Button color="inherit" >
                                     Create Question
                                 </Button>
@@ -47,7 +47,7 @@ export default function NavBar() {
                     {
                         userType !== 'STUDENT' &&
                         <React.Fragment>
-                            <Link to='questions/all' className='link-text'>
+                            <Link to='/questions/all' className='link-text'>
                                 <Button color="inherit">Questions</Button>
                             </Link>
                         </React.Fragment>
@@ -55,7 +55,7 @@ export default function NavBar() {
                     {
                         (userType === 'ADMIN' || userType === 'SUPER_ADMIN') &&
                         <React.Fragment>
-                            <Link to='users/all' className='link-text'>
+                            <Link to='/users/all' className='link-text'>
                                 <Button color="inherit">Users</Button>
                             </Link>
                         </React.Fragment>

@@ -20,7 +20,7 @@ export default function UserItem({ username, userType, onDeleteUser }) {
     }
 
     return (
-        <div className='user-item-container'>
+        <div className='item-container'>
             <div>
                 <h2>{username}</h2>
             </div>
