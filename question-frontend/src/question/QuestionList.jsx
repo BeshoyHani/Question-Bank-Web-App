@@ -20,7 +20,7 @@ export default function QuestionList() {
         findQuestions(pageNo)
             .then(questions => setQuestions(questions || []))
             .catch(error => setErrorMessage(error.message));
-    }, []);
+    }, [pageNo]);
 
     useEffect(() => {
         getQuestionCount()
@@ -53,7 +53,6 @@ export default function QuestionList() {
 
     const onDeleteQuestion = async (id) => {
         try {
-            console.log('hh')
             await deleteQuestion(id);
             setQuestions(questions.map(question => question._id !== id));
         } catch (error) {
@@ -66,13 +65,12 @@ export default function QuestionList() {
             {
                 questions.map((question, index) => {
                     return (
-                        <Link key={index} className='link-text' to={`/questions/update/${question._id}`}>
                             <QuestionItem
                                 name={question.name}
                                 category={question.category}
                                 eTime={question.expectedTime}
+                                questionID={question._id}
                                 onDelete={() => onDeleteQuestion(question._id)} />
-                        </Link>
                     )
 
                 })

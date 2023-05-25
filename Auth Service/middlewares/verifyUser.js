@@ -1,5 +1,5 @@
-
 import Jwt from 'jsonwebtoken';
+import httpError from './../models/customError.js';
 export const verifyUserCredintials = (req, res, next) => {
     try {
         const token = req.headers.authorization || req.body.token;
@@ -21,7 +21,8 @@ export const verifyUserType = (types) => {
     return (req, res, next) => {
         const user = types.find(type => req.user.userType === type);
         if (!user) {
-            res.status(401).json({ message: 'Unauthorized Access' });
+            const error = httpError('Unauthorized Access, Your role doesn\'t allow to perform such operation', 401);
+            return next(error);
         } else
             return next();
     };

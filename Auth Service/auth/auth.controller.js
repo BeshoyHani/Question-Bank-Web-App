@@ -1,26 +1,20 @@
-import { createUser, findUser } from "../users/users.model.js";
+import User from "../users/users.model.js";
 import bcrypt from 'bcrypt';
 import Jwt from "jsonwebtoken";
-import HttpError from "../models/http-error.js";
+import _ from 'lodash';
+import HttpError from "../models/customError.js";
 
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
     const { username, password } = req.body;
     try {
-        const user = await findUser(username);
+        const user = await User.findOne({ username: _.lowerCase(username) });
         if (!user) {
             throw new HttpError('User doesn\'t exist', 404);
         }
         const hashed_pwd = user.password;
         const is_correct_pwd = await bcrypt.compare(password, hashed_pwd);
         if (is_correct_pwd) {
-            const token = Jwt.sign({
-                userID: user._id,
-                username: user.username,
-                userType: user.userType
-            }, process.env.TOKEN_SECRET,
-                {
-                    expiresIn: '5h'
-                });
+            const token = signToken(user);
             res.status(200).json({
                 message: 'Successful Login',
                 username: user.username,
@@ -29,14 +23,14 @@ export const login = async (req, res) => {
             });
         } else {
             const error = new HttpError('Password is not correct', 401);
-            res.status(error.code).json({ error: error.message });
+            return next(error);
         }
     } catch (error) {
-        res.status(error.code).json({ error: error.message });
+        return next(error);
     }
 }
 
-export const signup = async (req, res) => {
+export const signup = async (req, res, next) => {
     const { username, password, userType } = req.body;
     try {
         if (userType === 'ADMIN') {
@@ -45,15 +39,14 @@ export const signup = async (req, res) => {
         }
         const salt_rounds = +(process.env.SALT_ROUNDS);
         const hashed_pwd = await bcrypt.hash(password, salt_rounds);
-        const user = await createUser(username, hashed_pwd, userType);
-        const token = Jwt.sign({
-            userID: user._id,
-            username: user.username,
-            userType: user.userType
-        }, process.env.TOKEN_SECRET,
-            {
-                expiresIn: '5h'
-            });
+        const user = new User({
+            username: _.lowerCase(username),
+            password: hashed_pwd,
+            userTyp: userType
+        });
+
+        await user.save();
+        const token = signToken(user);
         res.status(200).json({
             message: 'User Created Successfully',
             userType: user.userType,
@@ -61,20 +54,38 @@ export const signup = async (req, res) => {
         });
 
     } catch (error) {
-        res.status(error.code).json({ error: error.message });
+        return next(error);
     }
 }
 
-export const verify = (req, res) => {
-    if (Object.keys(req.user).length !== 0 )
+export const verify = (req, res, next) => {
+    if (Object.keys(req.user).length !== 0)
         res.status(200).json({
             message: 'Valid Credentials',
             user: req.user
         });
     else {
+        const error = new HttpError('Please, Login First', 401);
+        return next(error);
+        /*
         res.status(401).json({
             error: 'User is not authorized',
             message: 'Invalid Credentials'
         })
+        */
     }
+}
+
+
+const signToken = (user) => {
+    const token = Jwt.sign({
+        userID: user._id,
+        username: user.username,
+        userType: user.userType
+    },
+        process.env.TOKEN_SECRET,
+        {
+            expiresIn: '5h'
+        });
+    return token;
 }

@@ -1,8 +1,8 @@
 import { Router } from "express";
 import {
-    addAnswerToQuestion, editQuestion, findAllQuestions, findQuestion,
+    editQuestion, findAllQuestions, findQuestion,
     findQuestionsCount,
-    makeQuestion, removeAnswerFromQuestion, removeQuestion
+    makeQuestion, removeQuestion
 } from "./questions.controller.js";
 import { verifyUserType } from "../middlewares/auth.js";
 import userType from "../models/userType.js";
@@ -32,12 +32,12 @@ router.post('/delete',
     verifyUserType([userType.ADMIN]),
     removeQuestion);
 
-router.post('/answer/add',
-    verifyUserType([userType.TEACHER]),
-    addAnswerToQuestion);
+// router.post('/answer/add',
+//     verifyUserType([userType.TEACHER]),
+//     addAnswerToQuestion);
 
-router.post('/answer/delete',
-    verifyUserType([userType.TEACHER]),
-    removeAnswerFromQuestion);
+// router.post('/answer/delete',
+//     verifyUserType([userType.TEACHER]),
+//     removeAnswerFromQuestion);
 
 export default router;

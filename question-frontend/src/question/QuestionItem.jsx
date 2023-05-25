@@ -1,19 +1,23 @@
 import { IconButton } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 
-export default function QuestionItem({ name, category, eTime, onDelete }) {
-    const [userType, setUserType] = useState (localStorage.getItem('user-type'));
+export default function QuestionItem({ name, category, eTime, onDelete, questionID }) {
+    const [userType, setUserType] = useState(localStorage.getItem('user-type'));
     return (
         <div className='item-container'>
-            <div>
-                <h2>{name}</h2>
-                <div className="d-flex">
-                    <p className="question-item-info-p"> category: <em>{category} </em></p>
-                    <p className="question-item-info-p">expected time: <em>{eTime} s</em></p>
+            <Link className='link-text' to={`/questions/update/${questionID}`}>
+                <div>
+                    <h2>{name}</h2>
+                    <div className="d-flex">
+                        <p className="question-item-info-p"> category: <em>{category} </em></p>
+                        <p className="question-item-info-p">expected time: <em>{eTime} s</em></p>
+                    </div>
+
                 </div>
-            </div>
+            </Link>
             <div className='quesion-item-buttons-container'>
 
                 {

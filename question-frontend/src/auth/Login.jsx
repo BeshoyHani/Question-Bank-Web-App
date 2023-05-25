@@ -33,7 +33,7 @@ export default function Login({ setIsAuthenticated, setUserType }) {
             setUserType(localStorage.getItem('user-type'));
             setTimeout(() => {
                 localStorage.clear();
-            }, 1000 * 60 * 60)
+            }, 5000 * 60 * 60)
             navigate('/');
         } catch (error) {
             setPassword('');

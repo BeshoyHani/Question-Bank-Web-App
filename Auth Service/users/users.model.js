@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-import HttpError from "../models/http-error.js";
-import _ from 'lodash';
+import HttpError from "../models/customError.js";
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -27,56 +26,4 @@ const userSchema = new mongoose.Schema({
 });
 
 const User = mongoose.model('user', userSchema);
-
-export const findUser = async (username) => {
-    try {
-        const user = await User.findOne({ username: _.lowerCase(username) });
-        return user;
-    } catch (error) {
-        throw new HttpError(error.message, 500);
-    }
-}
-
-export const findAllUsers = async (req, res) => {
-    try {
-        const users = await User.find();
-        return users;
-    } catch (error) {
-        throw new HttpError(error.message, 500);
-    }
-}
-
-export const createUser = async (username, password, userType) => {
-    username = _.lowerCase(username);
-    try {
-        const user = new User({
-            username,
-            password,
-            userType
-        });
-        await user.save();
-        return user;
-    } catch (error) {
-        throw new HttpError(error.message, 500);
-    }
-}
-
-export const updateUser = async (username, userType) => {
-    try {
-        const user = User.findOneAndUpdate({username: username},
-            { userType: userType },
-            { new: true });
-        return user;
-    } catch (error) {
-        throw new HttpError(error.message, 500);
-    }
-}
-
-export const deleteUser = async (username) => {
-    username = _.lowerCase(username);
-    try {
-        const users = await User.findOneAndDelete({ username: username });
-    } catch (error) {
-        throw new HttpError(error.message, 500);
-    }
-}
+export default User;

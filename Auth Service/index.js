@@ -4,16 +4,17 @@ import authRouter from './auth/auth.routes.js';
 import userRouter from './users/users.routes.js';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import errorHandler from './middlewares/errorHandeling.js';
 
 dotenv.config();
 const app = express();
+
 app.use(cors());
 app.use(express.json());
+
 app.use('/auth', authRouter);
 app.use('/user', userRouter);
-app.use((error, req, res, next) => {
-    return next(error);
-});
+app.use(errorHandler);
 
 app.listen(process.env.PORT, () => {
     mongoose.connect(process.env.mongoURI).then(() => {

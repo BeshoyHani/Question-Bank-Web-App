@@ -1,6 +1,5 @@
 import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import './User.css';
 import { changeUserType } from './UserAPI';
 import { useState } from 'react';
 

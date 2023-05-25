@@ -1,4 +1,3 @@
-import './Question.css';
 import InputField from '../common/InputField';
 import AnswerList from '../answer/AnswerList';
 import { useEffect, useState } from 'react';
