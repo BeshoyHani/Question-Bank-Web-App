@@ -1,0 +1,30 @@
+{
+  "name": "exam-engine-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index",
+    "start:dev": "nodemon index",
+    "migrate:up:test": "SET ENV=test&& db-migrate up -e test",
+    "migrate:down:test": "db-migrate db:drop examEngine_db_test",
+    "migrate:up": "db-migrate up",
+    "migrate:down": "db-migrate down"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "joi": "^17.9.2",
+    "pg": "^8.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
