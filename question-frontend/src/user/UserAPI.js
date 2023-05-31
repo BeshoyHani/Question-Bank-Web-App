@@ -1,10 +1,10 @@
 import axios from 'axios';
-const baseURL = 'http://localhost:4000/user';
+const baseURL = 'http://localhost:4000/users';
 
-export const getAllUsers = async () => {
+export const getAllUsers = async (type) => {
     let res;
     try {
-        const URL = baseURL + '/all';
+        const URL = baseURL + (type ? `?type=${type}` : '/');
         res = await axios.get(URL);
         return res.data.users;
     } catch (error) {
@@ -22,6 +22,7 @@ export const getCurrentUser = async (username) => {
         }
         return res.data.user;
     } catch (error) {
+        console.log(error)
         throw Error(error.response.data.error);
     }
 }

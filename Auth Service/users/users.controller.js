@@ -1,8 +1,19 @@
 import User from "./users.model.js";
+import _ from 'lodash';
 
 export const getAllUsers = async (req, res, next) => {
     try {
-        const users = await User.find();
+        const { type, IDs } = req.query;
+        let obj = {};
+        if (type || (IDs && IDs[0] === '0'))
+            obj = { userType: type };
+        else if (IDs)
+            obj = {
+                _id: { $in: IDs }
+            };
+        console.log(IDs);
+        console.log(obj)
+        const users = await User.find(obj);
         res.status(200).json({
             message: `Found ${users.length} users`,
             users: users

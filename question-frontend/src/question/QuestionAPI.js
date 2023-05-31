@@ -1,5 +1,5 @@
 import axios from 'axios';
-const baseURL = 'http://localhost:4001/question';
+const baseURL = 'http://localhost:4001/questions';
 
 
 export const createQuestion = async (obj) => {
@@ -39,7 +39,7 @@ export const getQuestionById = async (id) => {
 export const getAllQuestions = async (pageNo) => {
     let res;
     try {
-        const URL = baseURL + `/all?page=${pageNo}`;
+        const URL = baseURL + `?page=${pageNo}`;
         res = await axios.get(URL);
         return res.data.questions;
     } catch (error) {

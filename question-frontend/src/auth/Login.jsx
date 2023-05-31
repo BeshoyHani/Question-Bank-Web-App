@@ -37,7 +37,7 @@ export default function Login({ setIsAuthenticated, setUserType }) {
             navigate('/');
         } catch (error) {
             setPassword('');
-            setErrorMessage(error.message)
+            setErrorMessage(error.message);
         }
     }
     return (

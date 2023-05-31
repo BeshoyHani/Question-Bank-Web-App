@@ -28,7 +28,7 @@ export default function User() {
     return (
         <div className='user-container item-container'>
             <div className='user-profile-image'>
-                <img src='https://cdn-icons-png.flaticon.com/512/1077/1077114.png' />
+                <img src='https://cdn-icons-png.flaticon.com/512/1077/1077114.png' alt='user' />
             </div>
             <InputField label='Username: ' type='text' value={capitalizeString(user.username)} isDisabled={true} />
             <InputField label='Role: ' type='text' value={user.userType} isDisabled={true} />

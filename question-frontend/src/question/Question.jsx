@@ -48,7 +48,7 @@ export default function Question({ isCreate }) {
 
     const addAnswer = () => {
         const answer = {
-            id: '',
+            id: answers[answers.length - 1].id + 1,
             name: '',
             description: ''
         };

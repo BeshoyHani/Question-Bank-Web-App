@@ -9,8 +9,7 @@ export default function validateReqParameters(validator) {
             next();
         }
         else {
-            const err = new httpError(error, 400);
-            return next(err);
+            return next(new httpError(error, 400));
         }
     }
 }

@@ -5,21 +5,20 @@ import { getAllUsers, getUser, removeUser, updateUserType } from "./users.contro
 import validateReqParameters from "../middlewares/validateRequestInputs.js";
 const userRouter = Router();
 
-userRouter.get('/all',
-    validateReqParameters('userScema'),
+userRouter.get('/',
     verifyUserCredintials,
     getAllUsers);
 
-userRouter.get('/:username', validateReqParameters('userScema'), verifyUserCredintials, getUser);
+userRouter.get('/:username', validateReqParameters('userSchema'), verifyUserCredintials, getUser);
 
 userRouter.post('/update',
-    validateReqParameters('updateUserScema'),
+    validateReqParameters('updateUserSchema'),
     verifyUserCredintials,
     verifyUserType([userType.ADMIN, userType.SUPER_ADMIN]),
     updateUserType);
 
 userRouter.post('/delete',
-    validateReqParameters('userScema'),
+    validateReqParameters('userSchema'),
     verifyUserCredintials,
     verifyUserType([userType.ADMIN, userType.SUPER_ADMIN]),
     removeUser);

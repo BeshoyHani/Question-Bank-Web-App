@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { deleteQuestion, getAllQuestions, getQuestionCount } from "./QuestionAPI";
 import QuestionItem from "./QuestionItem";
 import { Pagination } from "@mui/material";
-import { Link } from "react-router-dom";
 import TimedModal from "../common/TimedModal";
 
 export default function QuestionList() {
@@ -65,12 +64,13 @@ export default function QuestionList() {
             {
                 questions.map((question, index) => {
                     return (
-                            <QuestionItem
-                                name={question.name}
-                                category={question.category}
-                                eTime={question.expectedTime}
-                                questionID={question._id}
-                                onDelete={() => onDeleteQuestion(question._id)} />
+                        <QuestionItem
+                            key={index}
+                            name={question.name}
+                            category={question.category}
+                            eTime={question.expectedTime}
+                            questionID={question._id}
+                            onDelete={() => onDeleteQuestion(question._id)} />
                     )
 
                 })

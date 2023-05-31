@@ -8,7 +8,7 @@ export default function errorHandler(err, req, res, next) {
         httpStatusCode = err.httpStatusCode;
         message = err.message;
     } else {
-        if (process.env.ENV !== "prod") {
+        if (process.env.NODE_ENV !== "production") {
             if (typeof err === "string") {
                 message = err;
             } else if (err instanceof Error) {
@@ -18,7 +18,7 @@ export default function errorHandler(err, req, res, next) {
     }
 
     let stackTrace = undefined;
-    if (process.env.ENV !== "prod") {
+    if (process.env.NODE_ENV !== "production") {
         stackTrace = err.stack;
     }
 

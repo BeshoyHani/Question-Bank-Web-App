@@ -15,7 +15,7 @@ export const login = async (username, password) => {
         axios.defaults.headers.Authorization = 'Bearer ' + localStorage.getItem('access_token');
         return res.data;
     } catch (error) {
-        throw Error(error.response.data.error);
+        throw Error(error.response.data.error.message);
     }
 }
 
@@ -28,6 +28,6 @@ export const signup = async (username, userType, password) => {
         console.log(res)
         return res.data;
     } catch (error) {
-        throw Error(error.response.data.error);
+        throw Error(error.response.data.error.message);
     }
 }

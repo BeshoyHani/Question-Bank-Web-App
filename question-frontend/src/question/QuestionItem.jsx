@@ -10,7 +10,7 @@ export default function QuestionItem({ name, category, eTime, onDelete, question
         <div className='item-container'>
             <Link className='link-text' to={`/questions/update/${questionID}`}>
                 <div>
-                    <h2>{name}</h2>
+                    <h1>{name}</h1>
                     <div className="d-flex">
                         <p className="question-item-info-p"> category: <em>{category} </em></p>
                         <p className="question-item-info-p">expected time: <em>{eTime} s</em></p>

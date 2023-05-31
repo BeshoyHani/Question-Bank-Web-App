@@ -42,7 +42,7 @@ export const signup = async (req, res, next) => {
         const user = new User({
             username: _.lowerCase(username),
             password: hashed_pwd,
-            userTyp: userType
+            userType: userType
         });
 
         await user.save();

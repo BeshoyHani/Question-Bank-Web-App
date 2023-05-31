@@ -1,36 +1,45 @@
 import { Router } from "express";
 import {
-    editQuestion, findAllQuestions, findQuestion,
-    findQuestionsCount,
-    makeQuestion, removeQuestion
+    createQuestion,
+    deleteQuestion,
+    getAllQuestions,
+    getQuestion,
+    getQuestionsCount,
+    updateQuestion
 } from "./questions.controller.js";
 import { verifyUserType } from "../middlewares/auth.js";
 import userType from "../models/userType.js";
+import validateReqParameters from "../middlewares/validateRequestInputs.js";
+import { questionIDSchema, questionSchema } from "../models/joiSchema.js";
 
 const router = Router();
 
-router.get('/all',
+router.get('/',
     verifyUserType([userType.TEACHER, userType.ADMIN, userType.SUPER_ADMIN]),
-    findAllQuestions);
+    getAllQuestions);
 
 router.get('/count',
     verifyUserType([userType.TEACHER, userType.ADMIN, userType.SUPER_ADMIN]),
-    findQuestionsCount);
+    getQuestionsCount);
 
 router.get('/:questionID',
-    findQuestion);
+    validateReqParameters('questionIDSchema', 'params'),
+    getQuestion);
 
 router.post('/create',
+    validateReqParameters('questionSchema'),
     verifyUserType([userType.TEACHER]),
-    makeQuestion);
+    createQuestion);
 
 router.post('/update',
+    validateReqParameters('questionSchema'),
     verifyUserType([userType.TEACHER]),
-    editQuestion);
+    updateQuestion);
 
 router.post('/delete',
+    validateReqParameters('questionIDSchema'),
     verifyUserType([userType.ADMIN]),
-    removeQuestion);
+    deleteQuestion);
 
 // router.post('/answer/add',
 //     verifyUserType([userType.TEACHER]),

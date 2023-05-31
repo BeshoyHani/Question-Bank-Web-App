@@ -19,7 +19,7 @@ const loginSchema = Joi.object({
 });
 
 const signupSchema = loginSchema.keys({
-    userType: Joi.string().valid(userType)
+    userType: Joi.string().valid(...Object.values(userType))
 });
 
 const userSchema = Joi.object({

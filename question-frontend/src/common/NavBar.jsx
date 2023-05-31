@@ -7,8 +7,9 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link, useNavigate } from 'react-router-dom';
+import AccountMenu from './AccountMenu';
 
-export default function NavBar({userType, setUserType, setIsAuthenticated}) {
+export default function NavBar({ userType, setUserType, setIsAuthenticated }) {
     const navigte = useNavigate();
 
     const logout = () => {
@@ -35,33 +36,39 @@ export default function NavBar({userType, setUserType, setIsAuthenticated}) {
                     </Typography>
                     {
                         userType === 'TEACHER' &&
-                        <React.Fragment>
-                            <Link to='/questions/create' className='link-text'>
-                                <Button color="inherit" >
-                                    Create Question
-                                </Button>
-                            </Link>
-                        </React.Fragment>
-
+                        <Link to='/questions/create' className='link-text'>
+                            <Button color="inherit" >
+                                Create Question
+                            </Button>
+                        </Link>
                     }
                     {
                         userType !== 'STUDENT' &&
-                        <React.Fragment>
-                            <Link to='/questions/all' className='link-text'>
-                                <Button color="inherit">Questions</Button>
-                            </Link>
-                        </React.Fragment>
+                        <Link to='/questions' className='link-text'>
+                            <Button color="inherit">Questions</Button>
+                        </Link>
                     }
                     {
                         (userType === 'ADMIN' || userType === 'SUPER_ADMIN') &&
-                        <React.Fragment>
-                            <Link to='/users/all' className='link-text'>
-                                <Button color="inherit">Users</Button>
-                            </Link>
-                        </React.Fragment>
+                        <Link to='/users/all' className='link-text'>
+                            <Button color="inherit">Users</Button>
+                        </Link>
 
                     }
+
+                    <Link to='/exam' className='link-text'>
+                        <Button color="inherit" >
+                            exams
+                        </Button>
+                    </Link>
+
+                    <Link to='/exam/create' className='link-text'>
+                        <Button color="inherit" >
+                            Create exam
+                        </Button>
+                    </Link>
                     <Button color="inherit" onClick={logout}>Logout</Button>
+                    <AccountMenu />
                 </Toolbar>
             </AppBar>
         </div>

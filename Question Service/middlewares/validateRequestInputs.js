@@ -1,10 +1,10 @@
 import httpError from "../models/customError.js";
 import * as validators from "../models/joiSchema.js";
 
-export default function validateReqParameters(validator) {
+export default function validateReqParameters(validator, location = 'body') {
     return (req, res, next) => {
-        console.log(req.body)
-        const { error } = validators[validator].validate(req.body);
+        console.log(req[location])
+        const { error } = validators[validator].validate(req[location]);
         if (error === undefined) {
             next();
         }
