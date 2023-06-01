@@ -63,10 +63,11 @@ export const startExam = async (req, res, next) => {
     const { userID } = req.user;
     try {
         const client = await database.connect();
-        const examID_SQL = `SELECT e.id FROM exam_student es INNER JOIN exam e ON es.examID=e.id AND es.examID=($1) AND es.stdID=($2);`;
+        const examID_SQL = `SELECT e.id, e.passing_score FROM exam_student es INNER JOIN exam e ON es.examID=e.id AND es.examID=($1) AND es.stdID=($2);`;
         const questionIDs_SQL = `SELECT eq.questionid FROM exam_question eq WHERE eq.examID=($1);`;
         let result = await client.query(examID_SQL, [examID, userID]);
         const id = result.rows[0].id;
+        const passing_score = result.rows[0].passing_score;
         if (id === undefined)
             throw new httpError('You are not assigned to this exam', 404);
         result = (await client.query(questionIDs_SQL, [id])).rows;
@@ -90,13 +91,14 @@ export const startExam = async (req, res, next) => {
             answers: q.answers
         }))
 
-        const start_exam_SQL = 'UPDATE exam_student SET is_started=true WHERE stdid=($1)';
-        await client.query(start_exam_SQL, [userID]);
 
         res.status(200).json({
             message: `Questions retrieved Successfully`,
-            questions
+            questions,
+            passing_score
         });
+        const start_exam_SQL = 'UPDATE exam_student SET is_started=true WHERE stdid=($1)';
+        await client.query(start_exam_SQL, [userID]);
     } catch (error) {
         return next(error);
     }

@@ -28,10 +28,11 @@ const questionSchema = Joi.object({
     answers: Joi.array()
         .items(Joi.object({
             id: Joi.number().required(),
+            _id: Joi.string(),
             name: Joi.string(),
             description: Joi.string()
         }))
-});
+}).unknown(true);
 
 const questionIDSchema = Joi.object({
     id: Joi.string().required()

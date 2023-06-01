@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import ExamItem from "./ExamItem";
 import { assignExam, getExams } from "./ExamAPI";
 import StudentList from "./StudentsList";
+import TimedModal from "../common/TimedModal";
 
-export default function ExamList({role}) {
+export default function ExamList({ role }) {
 
     const [examList, setExamList] = useState([]);
     const [examID, setExamID] = useState();
     const [openStdList, setStdListStatus] = useState(false);
+    const [error, setError] = useState({ type: 'Error', message: '' });
 
     useEffect(() => {
         async function fetchExams() {
@@ -18,11 +20,18 @@ export default function ExamList({role}) {
                 console.log(error.message);
             }
         }
-
         fetchExams()
             .then(exams => setExamList(exams || []))
             .catch(error => console.log(error));
     }, []);
+
+    const setErrorMessage = (type, msg) => {
+        setError({
+            type: type,
+            message: msg
+        });
+        setTimeout(() => setError(type, ''), 2000);
+    }
 
     const openStudentList = (examID) => {
         setExamID(examID);
@@ -35,19 +44,34 @@ export default function ExamList({role}) {
 
     const handleAssignExam = async (stdIDs, examDate) => {
         try {
+            if (stdIDs.length === 0) {
+                setErrorMessage('Error', "Please select at least one student");
+                return;
+            } else if (examDate === null) {
+                setErrorMessage('Error', "Please Select Exam Date");
+                return;
+            }
+            else if (new Date(examDate) - new Date() <= 0) {
+                setErrorMessage('Error', "Exam Date is Over, Please Select a Valid Date");
+                return;
+            }
             const result = await assignExam(examID, examDate, stdIDs);
-            console.log(result);
+            setErrorMessage('Info', result);
         } catch (error) {
-            console.log(error.message)
+            setErrorMessage('Error', error.message);
         }
     }
 
     return (
         <div className="exam-list">
             {
-                examList.map((exam, index) => <ExamItem key={index} exam={exam} openStudentList={openStudentList} role={role}  />)
+                examList.map((exam, index) => <ExamItem key={index} exam={exam} openStudentList={openStudentList} role={role} />)
             }
             <StudentList open={openStdList} closeStudentList={closeStudentList} assignExam={handleAssignExam} />
+            {
+                error.message &&
+                <TimedModal time={3000} modalTitle={error.type} modalMessage={error.message} />
+            }
         </div>
     );
 }

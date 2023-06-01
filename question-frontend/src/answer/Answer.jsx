@@ -11,7 +11,7 @@ export default function Answer({ index, answer, onDelete, onAnswerChange }) {
                 name={`id`}
                 label="Answer ID"
                 placeholder={index + 1}
-                value={answer.id || (index + 1)}
+                value={`${answer.id}`||`${(index + 1)}`}
                 isDisabled={true}
                 onChange={(event) => { onAnswerChange(event, index) }} />
             <InputField

@@ -260,6 +260,22 @@ hr {
   box-shadow: 10px 8px 13px #bdbcbc;
 }
 
+.exam-results{
+  width: 50%;
+  margin: auto;
+  margin-top: 10%;
+  border: 1px solid darkgoldenrod;
+  box-shadow: 6px 3px darkgoldenrod;
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+#passed-exam{
+  color: green;
+}
+#failed-exam{
+  color: red;
+}
+
+
 input[type="datetime-local"]{
   padding: 15px;
   font-family: "Roboto Mono",monospace;

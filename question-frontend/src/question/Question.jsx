@@ -25,15 +25,15 @@ const answerObj = {
 
 export default function Question({ isCreate }) {
     const [qID, setQID] = useState(useParams().id);
-    const [answers, setAnswers] = useState([answerObj, {...answerObj, id: 2}]);
+    const [answers, setAnswers] = useState([answerObj, { ...answerObj, id: 2 }]);
     const [question, setQuestion] = useState(questionObj);
     const [message, setMessage] = useState('');
     const [freeze, setFreze] = useState(false);
 
     const handleAnswerChange = (event, index) => {
         let { name, value } = event.target;
-        value = name === 'isCorrect'? event.target.checked : value;
-        
+        value = name === 'isCorrect' ? event.target.checked : value;
+
         const answerArray = answers.map(((answer, ansIndex) => {
             if (index === ansIndex) {
                 answer[name] = value;
@@ -46,7 +46,7 @@ export default function Question({ isCreate }) {
 
     const setInfoMessage = (msg) => {
         setMessage(msg);
-        setTimeout(() => setMessage(''), 1000);
+        setTimeout(() => setMessage(''), 2000);
     }
 
     const addAnswer = () => {
@@ -69,19 +69,28 @@ export default function Question({ isCreate }) {
                 throw new Error('All Fields are Required.');
             }
         }
+
+        const count = answers.filter(ans => ans.isCorrect === true);
+        if(count.length === 0){
+            throw new Error('At least one answer should be correct');
+        }
+    }
+
+    const extractCorrectAnswers = () => {
+        const correctAnswers = answers
+                .filter(answer => answer.isCorrect === true)
+                .map(answer => answer.id);
+        return correctAnswers;
     }
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
             validateQuestionFields();
-            const correctAnswers = answers
-                .filter(answer => answer.isCorrect === true)
-                .map(answer => answer.id);
             const _answers = answers.map(({ isCorrect, ...rest }) => rest);
             const obj = {
                 ...question,
-                correctAnswers: correctAnswers,
+                correctAnswers: extractCorrectAnswers(),
                 answers: _answers
             };
             setFreze(true);
@@ -98,18 +107,18 @@ export default function Question({ isCreate }) {
         event.preventDefault();
         try {
             validateQuestionFields();
-            const correctAnswers = (question.correctAnswers).toString().split(',');
+            const _answers = answers.map(({ isCorrect, ...rest }) => rest);
             const obj = {
                 ...question,
-                correctAnswers,
-                answers,
+                correctAnswers: extractCorrectAnswers(),
+                answers: _answers,
                 id: qID
             };
             setFreze(true);
             const updatedQuestion = await updateQuestion(obj);
             setFreze(false);
             setQuestion(updatedQuestion);
-            setAnswers(updatedQuestion.answers)
+            //setAnswers(updatedQuestion.answers)
             setInfoMessage('Updated!')
         } catch (error) {
             setFreze(false);
@@ -131,67 +140,75 @@ export default function Question({ isCreate }) {
             getQuestion(qID)
                 .then(question => {
                     setQuestion(question);
-                    setAnswers(question.answers);
+                    const _answers = question.answers
+                        .map(ans => question.correctAnswers
+                            .includes(ans.id) === true ? { ...ans, isCorrect: true } : ans);
+                    setAnswers(_answers);
                 })
                 .catch(error => console.log(error));
         } else {
             setQuestion(questionObj);
-            setAnswers([answerObj, {...answerObj, id: 2}]);
+            setAnswers([answerObj, { ...answerObj, id: 2 }]);
         }
     }, [isCreate, qID]);
 
 
     return (
         <div className='container'>
-            <form>
-                <div className='d-flex' id="qName">
-                    <InputField id="qName" type="text" name="name" label="Question Name" placeholder="Question Name"
-                        value={question.name} onChange={handleQuestionChange} />
+            {
+                question ?
+                    <form>
+                        <div className='d-flex' id="qName">
+                            <InputField id="qName" type="text" name="name" label="Question Name" placeholder="Question Name"
+                                value={question.name} onChange={handleQuestionChange} />
 
-                </div>
+                        </div>
 
-                <div className='d-flex'>
-                    <InputField id="qMark" type="text" name="mark" label="Mark" placeholder="0"
-                        value={question.mark} onChange={handleQuestionChange} />
-                    <InputField id="qCategory" type="text" name="category" label="Category" placeholder="Multiple Choice"
-                        value={question.category} onChange={handleQuestionChange} />
+                        <div className='d-flex'>
+                            <InputField id="qMark" type="text" name="mark" label="Mark" placeholder="0"
+                                value={question.mark} onChange={handleQuestionChange} />
+                            <InputField id="qCategory" type="text" name="category" label="Category" placeholder="Multiple Choice"
+                                value={question.category} onChange={handleQuestionChange} />
 
-                </div>
+                        </div>
 
-                <div className='d-flex'>
-                    <InputField id="qSubCategory" type="text" name="subCategory" label="Sub Category" placeholder="HPC"
-                        value={question.subCategory} onChange={handleQuestionChange} />
-                    <InputField id="qExpectedTime" type="text" name="expectedTime" label="Expected Time" placeholder="Time in Seconds"
-                        value={question.expectedTime} onChange={handleQuestionChange}
-                    />
+                        <div className='d-flex'>
+                            <InputField id="qSubCategory" type="text" name="subCategory" label="Sub Category" placeholder="HPC"
+                                value={question.subCategory} onChange={handleQuestionChange} />
+                            <InputField id="qExpectedTime" type="text" name="expectedTime" label="Expected Time" placeholder="Time in Seconds"
+                                value={question.expectedTime} onChange={handleQuestionChange}
+                            />
 
-                </div>
+                        </div>
 
-                <hr />
-                <AnswerList answers={answers} setAnswers={setAnswers} onAddAnswer={addAnswer} handleAnswerChange={handleAnswerChange} />
-                {
-                    freeze &&
-                    <CircularIndeterminate />
-                }
-                <div className='d-flex'>
-                    {
-                        isCreate ?
-                            <Fab variant="extended" type='submit' color="success" aria-label="add"
-                                sx={{ mt: 3 }} onClick={handleSubmit} disabled={freeze}>
-                                Create
-                            </Fab>
-                            :
-                            <Fab variant="extended" type='submit' color="success" aria-label="add"
-                                sx={{ mt: 3 }} onClick={handleUpdate} disabled={freeze}>
-                                Update
-                            </Fab>
-                    }
-                </div>
-                {
-                    message.length > 0 &&
-                    <TimedModal time={2000} modalTitle='Info' modalMessage={message} />
-                }
-            </form>
+                        <hr />
+                        <AnswerList answers={answers} setAnswers={setAnswers} onAddAnswer={addAnswer} handleAnswerChange={handleAnswerChange} />
+                        {
+                            freeze &&
+                            <CircularIndeterminate />
+                        }
+                        <div className='d-flex'>
+                            {
+                                isCreate ?
+                                    <Fab variant="extended" type='submit' color="success" aria-label="add"
+                                        sx={{ mt: 3 }} onClick={handleSubmit} disabled={freeze}>
+                                        Create
+                                    </Fab>
+                                    :
+                                    <Fab variant="extended" type='submit' color="success" aria-label="add"
+                                        sx={{ mt: 3 }} onClick={handleUpdate} disabled={freeze}>
+                                        Update
+                                    </Fab>
+                            }
+                        </div>
+                        {
+                            message.length > 0 &&
+                            <TimedModal time={3000} modalTitle='Info' modalMessage={message} />
+                        }
+                    </form>
+                    :
+                    <p>Oops! Something goes Wrong</p>
+            }
         </div>
     );
 }

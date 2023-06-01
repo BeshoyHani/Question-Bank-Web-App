@@ -43,9 +43,7 @@ export default function QuestionList() {
 
 
     const handleChange = async (event, value) => {
-        console.log(value)
         const questionsList = await findQuestions(value);
-        console.log(questionsList)
         setQuestions(questionsList);
         setPageNo(value);
     }
@@ -53,7 +51,8 @@ export default function QuestionList() {
     const onDeleteQuestion = async (id) => {
         try {
             await deleteQuestion(id);
-            setQuestions(questions.map(question => question._id !== id));
+            const questionsList = await findQuestions(pageNo);
+            setQuestions(questionsList);
         } catch (error) {
             setErrorMessage(error.message);
         }

@@ -8,10 +8,15 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import PersonAdd from '@mui/icons-material/PersonAdd';
-import Settings from '@mui/icons-material/Settings';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
+import HighlightIcon from '@mui/icons-material/Highlight';
+import QuizIcon from '@mui/icons-material/Quiz';
 import Logout from '@mui/icons-material/Logout';
+import { Link } from 'react-router-dom';
+import Roles from './Roles';
 
-export default function AccountMenu() {
+export default function AccountMenu({ userType, logout }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -22,7 +27,7 @@ export default function AccountMenu() {
   };
   return (
     <React.Fragment>
-      <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center', mx: 3 }}>
         <Tooltip title="Account settings">
           <IconButton
             onClick={handleClick}
@@ -71,28 +76,67 @@ export default function AccountMenu() {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={handleClose}>
-          <Avatar /> Profile
-        </MenuItem>
+        <Link className='link-text' to='/'>
+          <MenuItem onClick={handleClose}>
+            <Avatar /> Profile
+          </MenuItem>
+        </Link>
+
         <Divider />
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <PersonAdd fontSize="small" />
-          </ListItemIcon>
-          Add another account
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
-          Settings
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <Logout fontSize="small" />
-          </ListItemIcon>
-          Logout
-        </MenuItem>
+
+        <Link className='link-text' to='/exam'>
+          <MenuItem onClick={handleClose}>
+            <ListItemIcon>
+              <HelpOutlineIcon fontSize="small" />
+            </ListItemIcon>
+            Exams
+          </MenuItem>
+        </Link>
+
+        {
+          userType === Roles.TEACHER &&
+          <Link className='link-text' to='/exam/create'>
+            <MenuItem onClick={handleClose}>
+              <ListItemIcon>
+                <DriveFileRenameOutlineIcon fontSize="small" />
+              </ListItemIcon>
+              Create Exam
+            </MenuItem>
+          </Link>
+        }
+
+        {
+          userType !== Roles.STUDENT &&
+          <Link className='link-text' to='/questions'>
+            <MenuItem onClick={handleClose}>
+              <ListItemIcon>
+                <HighlightIcon fontSize="small" />
+              </ListItemIcon>
+              Questions
+            </MenuItem>
+          </Link>
+        }
+        {
+          userType === Roles.TEACHER &&
+          <Link className='link-text' to='/questions/create'>
+            <MenuItem onClick={handleClose}>
+              <ListItemIcon>
+                <QuizIcon fontSize="small" />
+              </ListItemIcon>
+              Create Question
+            </MenuItem>
+          </Link>
+        }
+
+        <Link className='link-text' onClick={() => logout()}>
+          <MenuItem onClick={handleClose}>
+            <ListItemIcon>
+              <Logout fontSize="small" />
+            </ListItemIcon>
+            Logout
+          </MenuItem>
+        </Link>
+
       </Menu>
     </React.Fragment>
   );

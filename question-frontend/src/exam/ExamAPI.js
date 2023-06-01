@@ -54,7 +54,8 @@ export const takeExam = async (examID) => {
     try {
         const URL = baseURL + `/start/${examID}`;
         res = await axios.get(URL);
-        return res.data.questions;
+        const { questions, passing_score } = res.data;
+        return { questions, passing_score };
     } catch (error) {
         throw Error(error.response);
     }
@@ -64,7 +65,7 @@ export const submitExam = async (questions) => {
     let res;
     try {
         const URL = baseURL + `/submit`;
-        res = await axios.post(URL, {questions});
+        res = await axios.post(URL, { questions });
         return res.data.score;
     } catch (error) {
         throw Error(error.response);

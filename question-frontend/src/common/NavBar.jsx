@@ -32,22 +32,8 @@ export default function NavBar({ userType, setUserType, setIsAuthenticated }) {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        {localStorage.getItem('username')}
+                        Atos LMS
                     </Typography>
-                    {
-                        userType === 'TEACHER' &&
-                        <Link to='/questions/create' className='link-text'>
-                            <Button color="inherit" >
-                                Create Question
-                            </Button>
-                        </Link>
-                    }
-                    {
-                        userType !== 'STUDENT' &&
-                        <Link to='/questions' className='link-text'>
-                            <Button color="inherit">Questions</Button>
-                        </Link>
-                    }
                     {
                         (userType === 'ADMIN' || userType === 'SUPER_ADMIN') &&
                         <Link to='/users/all' className='link-text'>
@@ -55,20 +41,7 @@ export default function NavBar({ userType, setUserType, setIsAuthenticated }) {
                         </Link>
 
                     }
-
-                    <Link to='/exam' className='link-text'>
-                        <Button color="inherit" >
-                            exams
-                        </Button>
-                    </Link>
-
-                    <Link to='/exam/create' className='link-text'>
-                        <Button color="inherit" >
-                            Create exam
-                        </Button>
-                    </Link>
-                    <Button color="inherit" onClick={logout}>Logout</Button>
-                    <AccountMenu />
+                    <AccountMenu userType={userType} logout={logout} />
                 </Toolbar>
             </AppBar>
         </div>

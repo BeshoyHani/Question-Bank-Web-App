@@ -12,6 +12,7 @@ import { verifyUserType } from "../middlewares/auth.js";
 import userType from "../models/userType.js";
 import validateReqParameters from "../middlewares/validateRequestInputs.js";
 import { questionIDSchema, questionSchema } from "../models/joiSchema.js";
+import errorHandler from "../middlewares/errorHandeling.js";
 
 const router = Router();
 
@@ -27,7 +28,6 @@ router.get('/count',
     getQuestionsCount);
 
 router.get('/:questionID',
-    validateReqParameters('questionIDSchema', 'params'),
     getQuestion);
 
 
@@ -45,6 +45,8 @@ router.post('/delete',
     validateReqParameters('questionIDSchema'),
     verifyUserType([userType.ADMIN]),
     deleteQuestion);
+
+router.use(errorHandler);
 
 // router.post('/answer/add',
 //     verifyUserType([userType.TEACHER]),

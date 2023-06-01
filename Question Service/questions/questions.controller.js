@@ -86,11 +86,11 @@ export const updateQuestion = async (req, res, next) => { //params
     const { id, name, category, subcategory, mark, expectedTime, answers, correctAnswers } = req.body;
     const userID = req.user.userID;
     try {
-        const question = await Question.findById(questionID);
+        const question = await Question.findById(id);
         if (question.createdBy !== userID) {
             throw new HttpError('Unauthorized Access', 401);
         }
-        const updatedQuestion = Question.findByIdAndUpdate(id,
+        const updatedQuestion = await Question.findByIdAndUpdate(id,
             {
                 $set: {
                     name,
