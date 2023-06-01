@@ -19,18 +19,21 @@ const questionObj = {
 const answerObj = {
     id: 1,
     name: '',
-    description: ''
+    description: '',
+    isCorrect: false
 }
 
 export default function Question({ isCreate }) {
     const [qID, setQID] = useState(useParams().id);
-    const [answers, setAnswers] = useState([answerObj]);
+    const [answers, setAnswers] = useState([answerObj, {...answerObj, id: 2}]);
     const [question, setQuestion] = useState(questionObj);
     const [message, setMessage] = useState('');
     const [freeze, setFreze] = useState(false);
 
     const handleAnswerChange = (event, index) => {
-        const { name, value } = event.target;
+        let { name, value } = event.target;
+        value = name === 'isCorrect'? event.target.checked : value;
+        
         const answerArray = answers.map(((answer, ansIndex) => {
             if (index === ansIndex) {
                 answer[name] = value;
@@ -72,11 +75,14 @@ export default function Question({ isCreate }) {
         event.preventDefault();
         try {
             validateQuestionFields();
-            const correctAnswers = question.correctAnswers.split(',');
+            const correctAnswers = answers
+                .filter(answer => answer.isCorrect === true)
+                .map(answer => answer.id);
+            const _answers = answers.map(({ isCorrect, ...rest }) => rest);
             const obj = {
                 ...question,
-                correctAnswers,
-                answers
+                correctAnswers: correctAnswers,
+                answers: _answers
             };
             setFreze(true);
             await createQuestion(obj);
@@ -130,7 +136,7 @@ export default function Question({ isCreate }) {
                 .catch(error => console.log(error));
         } else {
             setQuestion(questionObj);
-            setAnswers([answerObj]);
+            setAnswers([answerObj, {...answerObj, id: 2}]);
         }
     }, [isCreate, qID]);
 
@@ -138,28 +144,26 @@ export default function Question({ isCreate }) {
     return (
         <div className='container'>
             <form>
-                <div className='d-flex'>
+                <div className='d-flex' id="qName">
                     <InputField id="qName" type="text" name="name" label="Question Name" placeholder="Question Name"
                         value={question.name} onChange={handleQuestionChange} />
+
+                </div>
+
+                <div className='d-flex'>
                     <InputField id="qMark" type="text" name="mark" label="Mark" placeholder="0"
                         value={question.mark} onChange={handleQuestionChange} />
-
-                </div>
-
-                <div className='d-flex'>
                     <InputField id="qCategory" type="text" name="category" label="Category" placeholder="Multiple Choice"
                         value={question.category} onChange={handleQuestionChange} />
-                    <InputField id="qSubCategory" type="text" name="subCategory" label="Sub Category" placeholder="HPC"
-                        value={question.subCategory} onChange={handleQuestionChange} />
 
                 </div>
 
                 <div className='d-flex'>
+                    <InputField id="qSubCategory" type="text" name="subCategory" label="Sub Category" placeholder="HPC"
+                        value={question.subCategory} onChange={handleQuestionChange} />
                     <InputField id="qExpectedTime" type="text" name="expectedTime" label="Expected Time" placeholder="Time in Seconds"
                         value={question.expectedTime} onChange={handleQuestionChange}
                     />
-                    <InputField id="qCorrectAnswers" type="text" name="correctAnswers" label="Correct Answers" placeholder="1, 3, 5"
-                        value={question.correctAnswers} onChange={handleQuestionChange} />
 
                 </div>
 

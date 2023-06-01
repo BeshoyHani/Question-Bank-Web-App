@@ -26,11 +26,21 @@ export const createQuestion = async (req, res, next) => {
     }
 }
 
-export const getQuestion = async (req, res) => { //params
+export const getQuestion = async (req, res, next) => { //params
     const { questionID } = req.params;
     try {
         const question = await Question.findById(questionID);
         res.status(200).json({ message: 'Found 1 Question', question });
+    } catch (error) {
+        return next(error);
+    }
+}
+
+export const getSetOfQuestion = async (req, res, next) => {
+    const { qIDs } = req.query;
+    try {
+        const questions = await Question.find({ _id: { $in: qIDs } });
+        res.status(200).json({ message: `Found ${questions.length} Question`, questions });
     } catch (error) {
         return next(error);
     }
@@ -72,7 +82,7 @@ export const getQuestionsCount = async (req, res, next) => {
     }
 }
 
-export const updateQuestion = async (req, res) => { //params
+export const updateQuestion = async (req, res, next) => { //params
     const { id, name, category, subcategory, mark, expectedTime, answers, correctAnswers } = req.body;
     const userID = req.user.userID;
     try {

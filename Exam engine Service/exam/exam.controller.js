@@ -1,12 +1,13 @@
 import axios from 'axios';
 import httpError from '../../Auth Service/models/customError.js';
 import database from '../config/database.js';
+import userType from './../models/userType.js';
 
 const QUESTION_SERVICE_URL = 'http://localhost:4001/questions';
 const User_SERVICE_URL = 'http://localhost:4000/users';
 
 export const createExam = async (req, res, next) => {
-    const  creatorID  = req.user.userID;
+    const creatorID = req.user.userID;
     const { name, passing_score, duration, questions } = req.body;
     try {
         const client = await database.connect();
@@ -54,32 +55,33 @@ export const assignExam = async (req, res, next) => {
     } catch (error) {
         return next(error);
     }
-    res.end()
 }
 
 
 export const startExam = async (req, res, next) => {
-    const {examID} = req.params;
-    const { stdID } = req.body;
+    const { examID } = req.params;
+    const { userID } = req.user;
     try {
         const client = await database.connect();
         const examID_SQL = `SELECT e.id FROM exam_student es INNER JOIN exam e ON es.examID=e.id AND es.examID=($1) AND es.stdID=($2);`;
         const questionIDs_SQL = `SELECT eq.questionid FROM exam_question eq WHERE eq.examID=($1);`;
-        let result = await client.query(examID_SQL, [examID, stdID]);
+        let result = await client.query(examID_SQL, [examID, userID]);
         const id = result.rows[0].id;
         if (id === undefined)
             throw new httpError('You are not assigned to this exam', 404);
         result = (await client.query(questionIDs_SQL, [id])).rows;
         const questionIDs = result.map(q => q.questionid);
 
-        /*
-        to be continued after configure question service
-         */
-        const response = await axios.get(`${QUESTION_SERVICE_URL}`, {
-            params: {
-                qIDs: questionIDs
-            }
-        });
+        let response
+        try {
+            response = await axios.get(`${QUESTION_SERVICE_URL}/set`, {
+                params: {
+                    qIDs: questionIDs
+                }
+            });
+        } catch (error) {
+            console.log(error)
+        }
         result = response.data.questions;
         const questions = result.map(q => ({
             _id: q._id,
@@ -87,33 +89,48 @@ export const startExam = async (req, res, next) => {
             description: q.description,
             answers: q.answers
         }))
+
+        const start_exam_SQL = 'UPDATE exam_student SET is_started=true WHERE stdid=($1)';
+        await client.query(start_exam_SQL, [userID]);
+
         res.status(200).json({
             message: `Questions retrieved Successfully`,
             questions
         });
     } catch (error) {
-        return next(new httpError(`Oops! Someting went Wrong. Please try again`, 500));
+        return next(error);
     }
 }
 
 
 export const submitExam = async (req, res, next) => {
     const { questions } = req.body;
+    const { userID } = req.user;
     try {
         const qIDs = questions.map(q => q._id);
-        const response = await axios.get(`${QUESTION_SERVICE_URL}`, {
+        const response = await axios.get(`${QUESTION_SERVICE_URL}/set`, {
             params: {
                 qIDs: qIDs
             }
         });
         const originalQuestions = response.data.questions;
-        /*
-        to be continued after frontend
-        */
+        let score = 0;
+        originalQuestions.forEach((q, index) => {
+            let counter = 0;
+            q.correctAnswers.forEach(ans => {
+                let found = questions[index].selectedAnswers?.filter(answer => answer === ans);
+                counter += found ? 1 : 0;
+            });
+            if (counter === q.correctAnswers.length)
+                score += q.mark;
+        });
 
+        const client = await database.connect();
+        const SQL = `UPDATE exam_student SET score=($1) WHERE stdid=($2)`;
+        await client.query(SQL, [score, userID]);
         res.status(200).json({
             message: 'Exam Submitted Successfully',
-            score: 80
+            score: score
         });
     } catch (error) {
         return next(error);
@@ -123,9 +140,26 @@ export const submitExam = async (req, res, next) => {
 
 export const getExamList = async (req, res, next) => {
     try {
+        const { type } = req.params;
+        const { userID } = req.user;
         const client = await database.connect();
-        const SQL = `SELECT * FROM exam`;
-        const result = await client.query(SQL);
+        let SQL = ``, result;
+        switch (type) {
+            case userType.STUDENT:
+                SQL = `SELECT e.*, es.score, es.start_time, es.is_started FROM exam e 
+                INNER JOIN exam_student es ON e.id=es.examid AND es.stdid=($1);`;
+                result = await client.query(SQL, [userID]);
+                break;
+            case userType.TEACHER:
+                SQL = `SELECT * FROM exam WHERE creatorid=($1);`;
+                result = await client.query(SQL, [userID]);
+                break;
+
+            case userType.ADMIN || userType.SUPER_ADMIN:
+                SQL = `SELECT * FROM exam`;
+                result = await client.query(SQL);
+                break;
+        }
         const exams = result.rows;
         res.status(200)
             .json({
@@ -133,6 +167,7 @@ export const getExamList = async (req, res, next) => {
                 exams: exams
             });
     } catch (error) {
+        console.log(error)
         return next(error);
     }
 }
@@ -148,7 +183,7 @@ export const getAssignedStudents = async (req, res, next) => {
 
         const response = await axios.get(User_SERVICE_URL, {
             params: {
-                IDs:  IDs.length? IDs : ['0']
+                IDs: IDs.length ? IDs : ['0']
             }
         })
         const students = response.data.users.map(std => std.username);
@@ -158,6 +193,6 @@ export const getAssignedStudents = async (req, res, next) => {
                 students: students
             });
     } catch (error) {
-        return next(error); 
+        return next(error);
     }
 }

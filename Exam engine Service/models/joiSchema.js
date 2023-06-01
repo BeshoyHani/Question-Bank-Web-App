@@ -40,8 +40,13 @@ const startExam = Joi.object({
     stdID: Joi.string().required()
 });
 
+const submitExamSchema = Joi.object({
+    questions: Joi.array().required()
+});
+
 export {
     createExamSchema,
     assignExamSchema,
     startExam,
+    submitExamSchema
 };

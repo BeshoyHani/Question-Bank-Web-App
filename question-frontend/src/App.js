@@ -9,8 +9,9 @@ import QuestionList from './question/QuestionList';
 import NavBar from './common/NavBar';
 import User from './user/User';
 import { ProtectRegisterationRoute, ProtectedRoute } from './common/Protection';
-import Exam from './exam/Exam';
+import CreateExam from './exam/CreateExam';
 import ExamList from './exam/ExamList';
+import Exam from './exam/Exam';
 
 const userType = {
   TEACHER: 'TEACHER',
@@ -22,7 +23,7 @@ const userType = {
 function App() {
   const username = localStorage.getItem('username');
   const [isAuthenticated, setIsAuthenticated] = useState(!!username);
-  const [currentUserType, setUserType] = useState('');
+  const [currentUserType, setUserType] = useState(localStorage.getItem('user-type'));
 
   return (
     <React.Fragment>
@@ -53,13 +54,19 @@ function App() {
 
         <Route path='/exam/create' exact element={
           <ProtectedRoute allowedRoles={[userType.TEACHER]} child={
-            <Exam />
+            <CreateExam />
           } />
         } />
 
         <Route path='/exam' exact element={
-          <ProtectedRoute allowedRoles={[userType.TEACHER]} child={
-            <ExamList />
+          <ProtectedRoute allowedRoles={[]} child={
+            <ExamList role={currentUserType} />
+          } />
+        } />
+
+        <Route path='/exam/:name/try/:id' exact element={
+          <ProtectedRoute allowedRoles={[]} child={
+            <Exam />
           } />
         } />
 

@@ -11,8 +11,6 @@ export const getAllUsers = async (req, res, next) => {
             obj = {
                 _id: { $in: IDs }
             };
-        console.log(IDs);
-        console.log(obj)
         const users = await User.find(obj);
         res.status(200).json({
             message: `Found ${users.length} users`,

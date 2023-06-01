@@ -115,6 +115,12 @@ div.d-flex {
   width: 80%;
 }
 
+#qName {
+  width: 80%;
+  margin: auto;
+  margin-bottom: 5px;
+}
+
 .question-item-info-p {
   margin-right: 35px;
 }
@@ -220,6 +226,39 @@ hr {
   width: 350px;
 }
 
+.exam-question-container{
+  background-color: white;
+  height: 100vh;
+  overflow-y: hidden;
+  position: relative;
+}
+
+.exam-question-container h3{
+  padding-bottom: 8%;
+  margin: 15px;
+}
+
+.next-question-btn{
+  display: flex;
+  justify-content: flex-end;
+  padding: 20px;  
+}
+
+#exam-question-answer{
+  display: block;
+  padding-left: 25px;
+  padding-bottom: 30px;
+  font-family:Arial, Helvetica, sans-serif;
+  font-size: x-large;
+  border: 1px solid darkgray;
+  padding: 30px;
+  box-shadow: 5px 8px #bdbcbc;
+  cursor: pointer;
+}
+
+#exam-question-answer:hover{
+  box-shadow: 10px 8px 13px #bdbcbc;
+}
 
 input[type="datetime-local"]{
   padding: 15px;

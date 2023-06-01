@@ -5,6 +5,7 @@ import {
     getAllQuestions,
     getQuestion,
     getQuestionsCount,
+    getSetOfQuestion,
     updateQuestion
 } from "./questions.controller.js";
 import { verifyUserType } from "../middlewares/auth.js";
@@ -18,6 +19,9 @@ router.get('/',
     verifyUserType([userType.TEACHER, userType.ADMIN, userType.SUPER_ADMIN]),
     getAllQuestions);
 
+router.get('/set',
+    getSetOfQuestion);
+
 router.get('/count',
     verifyUserType([userType.TEACHER, userType.ADMIN, userType.SUPER_ADMIN]),
     getQuestionsCount);
@@ -25,6 +29,7 @@ router.get('/count',
 router.get('/:questionID',
     validateReqParameters('questionIDSchema', 'params'),
     getQuestion);
+
 
 router.post('/create',
     validateReqParameters('questionSchema'),

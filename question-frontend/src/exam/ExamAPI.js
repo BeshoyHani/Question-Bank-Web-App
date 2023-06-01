@@ -12,10 +12,10 @@ export const createExam = async (obj) => {
     }
 }
 
-export const getExams = async () => {
+export const getExams = async (type) => {
     let res;
     try {
-        const URL = baseURL;
+        const URL = baseURL + `/${type}`;
         res = await axios.get(URL);
         return res.data.exams;
     } catch (error) {
@@ -46,5 +46,27 @@ export const getAssignedStudents = async (examID) => {
         return res.data.students;
     } catch (error) {
         throw Error(error.response.data.message);
+    }
+}
+
+export const takeExam = async (examID) => {
+    let res;
+    try {
+        const URL = baseURL + `/start/${examID}`;
+        res = await axios.get(URL);
+        return res.data.questions;
+    } catch (error) {
+        throw Error(error.response);
+    }
+}
+
+export const submitExam = async (questions) => {
+    let res;
+    try {
+        const URL = baseURL + `/submit`;
+        res = await axios.post(URL, {questions});
+        return res.data.score;
+    } catch (error) {
+        throw Error(error.response);
     }
 }

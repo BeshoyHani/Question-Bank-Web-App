@@ -17,6 +17,8 @@ import Avatar from '@mui/material/Avatar';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import { useState } from 'react';
+import Roles from './../common/Roles';
+import { Link } from 'react-router-dom';
 
 
 const ExpandMore = styled((props) => {
@@ -30,7 +32,7 @@ const ExpandMore = styled((props) => {
     }),
 }));
 
-export default function ExamItem({ exam, openStudentList }) {
+export default function ExamItem({ exam, openStudentList, role }) {
     const [expanded, setExpanded] = useState(false);
     const [isFlipped, setisFlipped] = useState(false);
     const [students, setStudents] = useState([]);
@@ -68,30 +70,51 @@ export default function ExamItem({ exam, openStudentList }) {
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
                             Duration: {exam.duration} h <br />
-                            Passing Score: {exam.passing_score}
+                            Passing Score: {exam.passing_score} <br />
+                            {
+                                role === Roles.STUDENT &&
+                                `Exam Data: ${exam.start_time}`
+                            }
                         </Typography>
                     </CardContent>
-                    <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <Button size="small" variant='contained' sx={{ textTransform: 'none' }} onClick={() => openStudentList(exam.id)}>Assign</Button>
-                        <Button size="small">
-                            <IconButton aria-label="delete" color="error">
-                                <DeleteIcon />
-                            </IconButton>
-                        </Button>
+                    {
+                        role !== Roles.STUDENT ?
+                            <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
 
-                        <ExpandMore
-                            expand={expanded}
-                            onClick={handleExpandClick}
-                            aria-expanded={expanded}
-                            aria-label="show more"
-                        >
-                            <ExpandMoreIcon />
-                        </ExpandMore>
-                    </CardActions>
+
+                                <Button size="small" variant='contained' sx={{ textTransform: 'none' }} onClick={() => openStudentList(exam.id)}>Assign</Button>
+                                <Button size="small">
+                                    <IconButton aria-label="delete" color="error">
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </Button>
+
+                                <ExpandMore
+                                    expand={expanded}
+                                    onClick={handleExpandClick}
+                                    aria-expanded={expanded}
+                                    aria-label="show more"
+                                >
+                                    <ExpandMoreIcon />
+                                </ExpandMore>
+                            </CardActions>
+                            :
+                            <CardActions sx={{ display: 'flex', justifyContent: 'center', padding: 2 }}>
+                                <Link to={`/exam/${exam.name}/try/${exam.id}`}>
+                                    <Button size="small" variant='contained'
+                                        sx={{ textTransform: 'none' }}>
+                                        Start
+                                    </Button>
+                                </Link>
+
+                            </CardActions>
+                    }
 
                 </React.Fragment>
-                <React.Fragment >
-                        <CardContent sx={{height: '240px', overflow: 'auto'}}>
+                {
+                    role !== Roles.STUDENT &&
+                    <React.Fragment >
+                        <CardContent sx={{ height: '240px', overflow: 'auto' }}>
                             <Typography paragraph>Students:</Typography>
                             {
                                 students.map((student, index) => {
@@ -104,21 +127,22 @@ export default function ExamItem({ exam, openStudentList }) {
                                             </ListItemAvatar>
                                             <ListItemText primary={student} />
                                         </ListItem>
-                                        
+
                                     )
                                 })
                             }
                         </CardContent>
 
-                    <ExpandMore
-                        expand={expanded}
-                        onClick={handleExpandClick}
-                        aria-expanded={expanded}
-                        aria-label="show more"
-                    >
-                        <ExpandMoreIcon />
-                    </ExpandMore>
-                </React.Fragment>
+                        <ExpandMore
+                            expand={expanded}
+                            onClick={handleExpandClick}
+                            aria-expanded={expanded}
+                            aria-label="show more"
+                        >
+                            <ExpandMoreIcon />
+                        </ExpandMore>
+                    </React.Fragment>
+                }
             </ReactCardFlip>
         </Card>
     );

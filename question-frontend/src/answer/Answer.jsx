@@ -1,4 +1,4 @@
-import { Fab } from "@mui/material";
+import { Checkbox, Fab, Tooltip } from "@mui/material";
 import InputField from "../common/InputField";
 import RemoveIcon from '@mui/icons-material/Remove';
 
@@ -31,11 +31,18 @@ export default function Answer({ index, answer, onDelete, onAnswerChange }) {
                 value={answer.description}
                 onChange={(event) => { onAnswerChange(event, index) }} />
 
+            <Tooltip title= {answer.isCorrect? "Correct" : "Not Correct"}>
+                <Checkbox name="isCorrect"
+                    onChange={(event) => {onAnswerChange(event, index)}}
+                    checked={answer.isCorrect} />
+
+            </Tooltip>
+
 
             <Fab color='warning' aria-label="add" size='medium' onClick={() => onDelete(index)}
                 sx={{
                     padding: 3,
-                    visibility: index ? 'visible' : 'hidden'
+                    visibility: index > 1 ? 'visible' : 'hidden'
                 }}>
                 <RemoveIcon />
             </Fab>

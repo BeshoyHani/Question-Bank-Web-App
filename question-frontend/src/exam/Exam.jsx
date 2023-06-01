@@ -1,141 +1,77 @@
 import { useEffect, useState } from "react";
-import InputField from "../common/InputField";
-import { getAllQuestions } from "../question/QuestionAPI";
-import QuestionListItem from "./QuestionListItem";
-import { Fab } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
-import { createExam } from "./ExamAPI";
-import TimedModal from './../common/TimedModal';
-
-const examObj = {
-    name: '',
-    passing_score: 50,
-    duration: 1
-};
+import { submitExam, takeExam } from "./ExamAPI";
+import { useParams } from "react-router-dom";
+import { Checkbox, Typography } from "@mui/material";
+import Button from '@mui/material/Button';
+import SendIcon from '@mui/icons-material/Send';
 
 export default function Exam() {
+    const [examID] = useState(useParams().id);
+    const [examName] = useState(useParams().name);
     const [questions, setQuestions] = useState([]);
-    const [error, setError] = useState({ type: 'Error', message: '' });
-    const [submitBtnStatus, setSubmitBtnStatus] = useState(false);
-    const [examInfo, setExamInfo] = useState(examObj);
+    const [index, setIndex] = useState(0);
+    const [answers, setAnswers] = useState([]);
 
-    const setErrorMessage = (type, msg) => {
-        setError({
-            type: type,
-            message: msg
-        });
-        setTimeout(() => setError(type, ''), 2000);
+    const getNextQuestion = async () => {
+        questions[index].selectedAnswers = answers;
+        await handleSubmit();
+        setAnswers([]);
+        setIndex(index + 1);
+    }
+
+    const handleChooseAnswer = (event) => {
+        const { id, checked } = event.target;
+        const _answers = checked ? [...answers, id] : answers.filter(answer => answer !== id);
+        setAnswers(_answers);
+    }
+
+    const handleSubmit = async (event) => {
+        try {
+            const score = await submitExam(questions);
+            console.log(score);
+            return score;
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     useEffect(() => {
-        findQuestions(1)
+        const fetchExamQuestions = async () => {
+            try {
+                const questions = await takeExam(examID);
+                console.log(questions)
+                return questions;
+            } catch (error) {
+                console.log(error.message);
+                return [];
+            }
+        }
+        fetchExamQuestions()
             .then(questions => setQuestions(questions || []))
-            .catch(error => setErrorMessage('Error', error.message));
+            .catch((error) => console.log(error));
     }, []);
-
-    const handleSelectQuestion = (q) => {
-        const _questions = questions.map(item => {
-            return item._id === q._id ?
-                {
-                    ...item,
-                    isChecked: !!!item.isChecked
-                } :
-                item;
-        });
-        setQuestions(_questions);
-    }
-
-    const handleChangeInput = (event) => {
-        const { name, value } = event.target;
-        const info = {
-            ...examInfo,
-            [name]: value
-        };
-        setExamInfo(info);
-    }
-
-    const findQuestions = async (pageNo) => {
-        try {
-            const questions = await getAllQuestions(pageNo);
-            return questions;
-        } catch (error) {
-            setErrorMessage('Error', error.message);
-        }
-    }
-
-    const handleSubmit = async () => {
-        const qIDs = questions
-            .filter(q => q.isChecked === true)
-            .map(q => q._id);
-
-        for (const prop in examInfo) {
-            if (examInfo[prop].length === 0) {
-                setErrorMessage('Error', 'All Fields are Required.');
-                return;
-            }
-        }
-
-        if (qIDs.length === 0) {
-            setErrorMessage('Error', 'Must choose at least one question.');
-            return;
-        }
-
-        const obj = {
-            ...examInfo,
-            questions: qIDs
-        }
-        try {
-            setSubmitBtnStatus(true);
-            const response = await createExam(obj);
-            setSubmitBtnStatus(false);
-            setErrorMessage('Info', response);
-            resetInput();
-        } catch (error) {
-            setErrorMessage('Error', error.message);
-            setSubmitBtnStatus(false);
-        }
-    }
-
-    const resetInput = () => {
-        setExamInfo(examObj);
-        setQuestions(questions.map(q => {
-            return {
-                ...q,
-                isChecked: false
-            }
-        }));
-    }
-
     return (
-        <div className="exam-container">
-            <InputField className='row' id="name" type="text" name="name" label="Name" placeholder="Name"
-                value={examInfo.name} onChange={handleChangeInput} />
-
-            <InputField className='row' id="passing_score" type="number" name="passing_score" label="Passing Score" placeholder="Passing Score"
-                value={examInfo.passing_score} onChange={handleChangeInput} />
-
-            <InputField className='row' id="duration" type="number" name="duration" label="Duration (hours)" placeholder="Duration "
-                value={examInfo.duration} onChange={handleChangeInput} />
-
-            <label> <strong>Questions</strong></label>
-            <div className="exam-item-row">
-                {
-                    questions.map((question, index) => {
-                        return <QuestionListItem key={index} onCheck={handleSelectQuestion} question={question} index={index} />
-                    })
-                }
-
-            </div>
-
-            <Fab color="success" aria-label="Create" onClick={handleSubmit} disabled={submitBtnStatus}>
-                <AddIcon />
-            </Fab>
-
+        <div className="exam-question-container" >
             {
-                error.message &&
-                <TimedModal time={3000} modalTitle={error.type} modalMessage={error.message} />
+                questions.length &&
+                <div>
+                    <Typography className="d-flex row" fontFamily="serif" variant="h3">{index + 1}. {questions[index].name}</Typography>
+                    {
+                        questions[index].answers.map((answer, index) => {
+                            return <div key={index} id="exam-question-answer">
+                                <Checkbox id={index + 1}
+                                onChange={handleChooseAnswer} />
+                                {answer.name}
+                            </div>
+                        })
+                    }
+                    <div className="next-question-btn">
+                        <Button variant="outlined" onClick={getNextQuestion} endIcon={<SendIcon />}>
+                            Next
+                        </Button>
+                    </div>
+                </div>
             }
         </div>
-
     );
 }

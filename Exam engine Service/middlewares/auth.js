@@ -3,6 +3,7 @@ import axios from "axios";
 const URL = 'http://localhost:4000/auth/verify';
 
 export const verifyUserCredentials = async (req, res, next) => {
+    axios.defaults.headers.Authorization = req.headers.authorization;
     axios({
         method: 'post',
         url: URL,
@@ -14,6 +15,6 @@ export const verifyUserCredentials = async (req, res, next) => {
         req.user = data.user;
         next();
     }).catch(error => {
-        res.status(error.response.status || 401).json({ message: error.response.data.message });
+       return next(error);
     });
 }
