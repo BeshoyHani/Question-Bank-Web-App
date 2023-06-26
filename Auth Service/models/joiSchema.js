@@ -15,7 +15,7 @@ const loginSchema = Joi.object({
         .alphanum()
         .min(minLength)
         .max(maxLength)
-        .required(),
+        .allow('')
 });
 
 const signupSchema = loginSchema.keys({
@@ -23,12 +23,12 @@ const signupSchema = loginSchema.keys({
 });
 
 const userSchema = Joi.object({
-    username: signupSchema.extract('username').required,
+    username: signupSchema.extract('username').required(),
 });
 
 const updateUserSchema = Joi.object({
     username: signupSchema.extract('username'),
-    userType: signupSchema.extract('userType').required
+    userType: signupSchema.extract('userType').required()
 });
 
 export {

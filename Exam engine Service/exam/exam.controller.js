@@ -88,7 +88,8 @@ export const startExam = async (req, res, next) => {
             _id: q._id,
             name: q.name,
             description: q.description,
-            answers: q.answers
+            answers: q.answers,
+            duration: q.expectedTime
         }))
 
 
@@ -97,16 +98,17 @@ export const startExam = async (req, res, next) => {
             questions,
             passing_score
         });
-        const start_exam_SQL = 'UPDATE exam_student SET is_started=true WHERE stdid=($1)';
-        await client.query(start_exam_SQL, [userID]);
+        const start_exam_SQL = 'UPDATE exam_student SET is_started=true WHERE stdid=($1) AND examID=($2)';
+        await client.query(start_exam_SQL, [userID, examID]);
     } catch (error) {
+        console.log(error)
         return next(error);
     }
 }
 
 
 export const submitExam = async (req, res, next) => {
-    const { questions } = req.body;
+    const { examID, questions } = req.body;
     const { userID } = req.user;
     try {
         const qIDs = questions.map(q => q._id);
@@ -120,7 +122,7 @@ export const submitExam = async (req, res, next) => {
         originalQuestions.forEach((q, index) => {
             let counter = 0;
             q.correctAnswers.forEach(ans => {
-                let found = questions[index].selectedAnswers?.filter(answer => answer === ans);
+                let found = questions[index].selectedAnswers?.find(answer => answer === ans);
                 counter += found ? 1 : 0;
             });
             if (counter === q.correctAnswers.length)
@@ -128,8 +130,8 @@ export const submitExam = async (req, res, next) => {
         });
 
         const client = await database.connect();
-        const SQL = `UPDATE exam_student SET score=($1) WHERE stdid=($2)`;
-        await client.query(SQL, [score, userID]);
+        const SQL = `UPDATE exam_student SET score=($1) WHERE stdid=($2) AND examID=($3)`;
+        await client.query(SQL, [score, userID, examID]);
         res.status(200).json({
             message: 'Exam Submitted Successfully',
             score: score

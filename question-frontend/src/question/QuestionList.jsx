@@ -59,21 +59,24 @@ export default function QuestionList() {
     }
 
     return (
-        <div>
-            {
-                questions.map((question, index) => {
-                    return (
-                        <QuestionItem
-                            key={index}
-                            name={question.name}
-                            category={question.category}
-                            eTime={question.expectedTime}
-                            questionID={question._id}
-                            onDelete={() => onDeleteQuestion(question._id)} />
-                    )
+        <div className="question-list-container">
+            <h2 id='list-title'>Questions</h2>
+            <ol>
+                {
+                    questions.map((question, index) => {
+                        return (
+                            <QuestionItem
+                                key={index}
+                                name={question.name}
+                                category={question.category}
+                                eTime={question.expectedTime}
+                                questionID={question._id}
+                                onDelete={() => onDeleteQuestion(question._id)} />
+                        )
 
-                })
-            }
+                    })
+                }
+            </ol>
 
             {error.length > 0 &&
                 <TimedModal time={2000} modalTitle='Error' modalMessage={error} />

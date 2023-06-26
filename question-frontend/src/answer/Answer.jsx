@@ -42,6 +42,7 @@ export default function Answer({ index, answer, onDelete, onAnswerChange }) {
             <Fab color='warning' aria-label="add" size='medium' onClick={() => onDelete(index)}
                 sx={{
                     padding: 3,
+                    mx: 3,
                     visibility: index > 1 ? 'visible' : 'hidden'
                 }}>
                 <RemoveIcon />

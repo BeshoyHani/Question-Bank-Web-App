@@ -108,6 +108,7 @@ export default function CreateExam() {
 
     return (
         <div className="exam-container">
+        <h1>Create Exam</h1>
             <InputField className='row' id="name" type="text" name="name" label="Name" placeholder="Name"
                 value={examInfo.name} onChange={handleChangeInput} />
 
@@ -118,14 +119,14 @@ export default function CreateExam() {
                 value={examInfo.duration} onChange={handleChangeInput} />
 
             <label> <strong>Questions</strong></label>
-            <div className="exam-item-row">
+            <ol className="exam-item-row">
                 {
                     questions.map((question, index) => {
                         return <QuestionListItem key={index} onCheck={handleSelectQuestion} question={question} index={index} />
                     })
                 }
 
-            </div>
+            </ol>
 
             <Fab color="success" aria-label="Create" onClick={handleSubmit} disabled={submitBtnStatus}>
                 <AddIcon />

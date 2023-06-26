@@ -60,26 +60,33 @@ export default function Question({ isCreate }) {
 
     const handleQuestionChange = (event) => {
         const { name, value } = event.target;
+        console.log(name, value)
         setQuestion({ ...question, [name]: value });
     }
 
     const validateQuestionFields = () => {
-        for (const prop in question) {
-            if (question[prop].length === 0) {
+        console.log(answers)
+        const questions = {
+            ...question,
+            correctAnswers: answers
+        };
+        console.log(questions)
+        for (const prop in questions) {
+            if (questions[prop].length === 0) {
                 throw new Error('All Fields are Required.');
             }
         }
-
+        
         const count = answers.filter(ans => ans.isCorrect === true);
-        if(count.length === 0){
+        if (count.length === 0) {
             throw new Error('At least one answer should be correct');
         }
     }
 
     const extractCorrectAnswers = () => {
         const correctAnswers = answers
-                .filter(answer => answer.isCorrect === true)
-                .map(answer => answer.id);
+            .filter(answer => answer.isCorrect === true)
+            .map(answer => answer.id);
         return correctAnswers;
     }
 
@@ -165,7 +172,7 @@ export default function Question({ isCreate }) {
                         </div>
 
                         <div className='d-flex'>
-                            <InputField id="qMark" type="text" name="mark" label="Mark" placeholder="0"
+                            <InputField id="qMark" type="number" name="mark" label="Mark" placeholder="0"
                                 value={question.mark} onChange={handleQuestionChange} />
                             <InputField id="qCategory" type="text" name="category" label="Category" placeholder="Multiple Choice"
                                 value={question.category} onChange={handleQuestionChange} />
@@ -175,7 +182,7 @@ export default function Question({ isCreate }) {
                         <div className='d-flex'>
                             <InputField id="qSubCategory" type="text" name="subCategory" label="Sub Category" placeholder="HPC"
                                 value={question.subCategory} onChange={handleQuestionChange} />
-                            <InputField id="qExpectedTime" type="text" name="expectedTime" label="Expected Time" placeholder="Time in Seconds"
+                            <InputField id="qExpectedTime" type="number" name="expectedTime" label="Expected Time" placeholder="Time in Seconds"
                                 value={question.expectedTime} onChange={handleQuestionChange}
                             />
 

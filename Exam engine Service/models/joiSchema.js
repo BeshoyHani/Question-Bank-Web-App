@@ -41,6 +41,7 @@ const startExam = Joi.object({
 });
 
 const submitExamSchema = Joi.object({
+    examID: Joi.string().required(),
     questions: Joi.array().required()
 });
 

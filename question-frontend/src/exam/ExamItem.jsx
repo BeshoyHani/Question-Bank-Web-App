@@ -100,13 +100,13 @@ export default function ExamItem({ exam, openStudentList, role }) {
                             </CardActions>
                             :
                             <CardActions sx={{ display: 'flex', justifyContent: 'center', padding: 2 }}>
-                                <Link to={`/exam/${exam.name}/try/${exam.id}`}>
-                                    <Button size="small" variant='contained'
+                                <Button size="small" variant='contained'
                                     disabled={exam.is_started}
-                                        sx={{ textTransform: 'none' }}>
-                                        {exam.is_started? 'Ended' : 'Start'}
-                                    </Button>
-                                </Link>
+                                    sx={{ textTransform: 'none' }}>
+                                    <Link to={`/exams/${exam.name}/try/${exam.id}`} className='link-text'>
+                                        {exam.is_started ? 'Ended' : 'Start'}
+                                    </Link>
+                                </Button>
 
                             </CardActions>
                     }

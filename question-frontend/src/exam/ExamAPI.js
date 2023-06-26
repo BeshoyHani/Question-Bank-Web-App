@@ -61,11 +61,11 @@ export const takeExam = async (examID) => {
     }
 }
 
-export const submitExam = async (questions) => {
+export const submitExam = async (questions, examID) => {
     let res;
     try {
         const URL = baseURL + `/submit`;
-        res = await axios.post(URL, { questions });
+        res = await axios.post(URL, { examID, questions });
         return res.data.score;
     } catch (error) {
         throw Error(error.response);

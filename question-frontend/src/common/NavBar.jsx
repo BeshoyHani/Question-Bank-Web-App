@@ -8,6 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link, useNavigate } from 'react-router-dom';
 import AccountMenu from './AccountMenu';
+import useAuth from '../hooks/useAuth';
 
 export default function NavBar({ userType, setUserType, setIsAuthenticated }) {
     const navigte = useNavigate();
@@ -32,11 +33,11 @@ export default function NavBar({ userType, setUserType, setIsAuthenticated }) {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                        Atos LMS
+                       <Link to='/' className='link-text'> Atos LMS </Link>
                     </Typography>
                     {
                         (userType === 'ADMIN' || userType === 'SUPER_ADMIN') &&
-                        <Link to='/users/all' className='link-text'>
+                        <Link to='/users' className='link-text'>
                             <Button color="inherit">Users</Button>
                         </Link>
 

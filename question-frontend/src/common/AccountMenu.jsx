@@ -76,7 +76,7 @@ export default function AccountMenu({ userType, logout }) {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <Link className='link-text' to='/'>
+        <Link className='link-text' to='/profile'>
           <MenuItem onClick={handleClose}>
             <Avatar /> Profile
           </MenuItem>
@@ -84,7 +84,7 @@ export default function AccountMenu({ userType, logout }) {
 
         <Divider />
 
-        <Link className='link-text' to='/exam'>
+        <Link className='link-text' to='/exams'>
           <MenuItem onClick={handleClose}>
             <ListItemIcon>
               <HelpOutlineIcon fontSize="small" />
@@ -95,7 +95,7 @@ export default function AccountMenu({ userType, logout }) {
 
         {
           userType === Roles.TEACHER &&
-          <Link className='link-text' to='/exam/create'>
+          <Link className='link-text' to='/exams/create'>
             <MenuItem onClick={handleClose}>
               <ListItemIcon>
                 <DriveFileRenameOutlineIcon fontSize="small" />

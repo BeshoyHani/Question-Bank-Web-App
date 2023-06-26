@@ -6,16 +6,17 @@ import TimedModal from "../common/TimedModal";
 export default function UsersList() {
     const [users, setUsers] = useState([]);
     const [error, setError] = useState('');
-    
+
     const setErrorMessage = (msg) => {
         setError(msg);
-        setTimeout(() => setError(''), 1000);
+        setTimeout(() => setError(''), 2000);
     }
 
     const onDeleteUser = async (username) => {
         try {
             await deleteUser(username);
-            setUsers(users.map(user => user.username !== username));
+            const users = await getAllUsers();
+            setUsers(users);
         } catch (error) {
             setErrorMessage(error.message);
         }
@@ -33,7 +34,8 @@ export default function UsersList() {
             .catch(error => setErrorMessage(error.message));
     }, []);
     return (
-        <div>
+        <div className="question-list-container">
+            <h2 id='list-title'>Users</h2>
             {users.map((user, index) => {
                 return <UserItem username={user.username} userType={user.userType} onDeleteUser={onDeleteUser} key={index} />
             })}
@@ -41,7 +43,7 @@ export default function UsersList() {
 
             {
                 error.length > 0 &&
-                <TimedModal time={2000} modalTitle='Error' modalMessage={error} />
+                <TimedModal time={3000} modalTitle='Error' modalMessage={error} />
             }
         </div>
     );

@@ -65,7 +65,12 @@ export default function ExamList({ role }) {
     return (
         <div className="exam-list">
             {
+                examList.length > 0 ?
                 examList.map((exam, index) => <ExamItem key={index} exam={exam} openStudentList={openStudentList} role={role} />)
+            :
+            <div className="empty-list-dev">
+                You don't have any exams yet!
+            </div>
             }
             <StudentList open={openStdList} closeStudentList={closeStudentList} assignExam={handleAssignExam} />
             {

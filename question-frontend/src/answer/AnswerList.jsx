@@ -14,7 +14,7 @@ export default function AnswerList({ answers, setAnswers, onAddAnswer, handleAns
                 {
                     index === answers.length - 1 &&
                     <div style={{ width: '5%', }}>
-                        <Fab onClick={onAddAnswer} color='default' aria-label="add" size='medium'>
+                        <Fab onClick={onAddAnswer} color='default' aria-label="add" size='medium' sx={{ml: 4}}>
                             <AddIcon />
                         </Fab>
                     </div>

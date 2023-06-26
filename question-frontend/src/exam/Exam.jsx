@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import ExamResult from "./ExamResult";
 import ProgressBar from "../common/ProgressBar";
+import Countdown from "react-countdown";
 
 export default function Exam() {
     const [examID] = useState(useParams().id);
@@ -34,12 +35,16 @@ export default function Exam() {
 
     const handleSubmit = async (event) => {
         try {
-            const score = await submitExam(questions);
+            const score = await submitExam(questions, examID);
             setScore(score);
         } catch (error) {
             console.log(error)
         }
     }
+
+    const counterRenderer = ({ minutes, seconds }) => {
+        return <span>{minutes}:{seconds}</span>;
+    };
 
     useEffect(() => {
         const fetchExamQuestions = async () => {
@@ -67,7 +72,12 @@ export default function Exam() {
                     index === questions.length ? <ExamResult score={score} passingScore={passingScore} />
                         :
                         <div>
-                            <ProgressBar value={(index + 1)/questions.length * 100} />
+                            <ProgressBar value={(index + 1) / questions.length * 100} />
+                            <div className="counter-div">
+                                <Countdown date={Date.now() + (questions[index].duration) * 1000} key={index}
+                                    onComplete={getNextQuestion}
+                                    renderer={counterRenderer} />
+                            </div>
                             <Typography className="d-flex row" fontFamily="serif" variant="h3">{index + 1}. {questions[index].name}</Typography>
                             {
                                 questions[index].answers.map((answer, index) => {

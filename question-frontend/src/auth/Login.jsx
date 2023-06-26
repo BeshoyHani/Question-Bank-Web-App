@@ -1,7 +1,7 @@
 import { Fab } from '@mui/material';
 import InputField from '../common/InputField';
 import './Auth.css'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { login } from './AuthAPI';
 import { Link, useNavigate } from 'react-router-dom';
 import TimedModal from '../common/TimedModal';

@@ -22,7 +22,9 @@ const questionSchema = Joi.object({
     expectedTime: Joi.date().required(),
 
     correctAnswers: Joi.array()
-        .items(Joi.string()
+        .items(Joi.number(),
+        Joi.string(),
+        Joi.string()
         ),
 
     answers: Joi.array()

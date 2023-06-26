@@ -13,7 +13,7 @@ export default function QuestionListItem({ question, index, onCheck }) {
             secondaryAction={
                 <Checkbox
                     edge="end"
-                    onChange={()=>onCheck(question)}
+                    onChange={() => onCheck(question)}
                     checked={question.isChecked === true}
                     inputProps={{ 'aria-labelledby': index }}
                 />
@@ -21,16 +21,19 @@ export default function QuestionListItem({ question, index, onCheck }) {
             disablePadding
         >
             <ListItemButton onClick={() => onCheck(question)}>
-                <div className='exam-question-item-info'>
+                <li className='exam-question-item-info'>
                     <h3>{question.name}</h3>
-                    <div>
+                    <ul>
                         {
                             question.answers.map((answer, index) => {
-                                return <p key={index}><strong>{answer.name}</strong></p>
+                                return <li key={index}
+                                    style={{ color: question.correctAnswers.includes(answer.id) ? 'green' : 'red' }}>
+                                    <strong>{answer.name}</strong>
+                                </li>
                             })
                         }
-                    </div>
-                </div>
+                    </ul>
+                </li>
                 <div>
                     <p>{question.category}</p>
                     <p>{question.mark} Mark</p>

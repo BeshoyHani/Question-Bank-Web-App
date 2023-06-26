@@ -5,9 +5,9 @@ export const ProtectedRoute = ({ child, allowedRoles }) => {
     const myType = localStorage.getItem("user-type");
     const isTypeAllowed = allowedRoles.find(type => type === myType);
 
-    if (!isAuthenticated) {
-        return <Navigate to="/login" replace />;
-    } else if (allowedRoles.length !== 0 && !isTypeAllowed) {
+    // if (!isAuthenticated) {
+    //     return <Navigate to="/login" replace />;
+     if (allowedRoles.length !== 0 && isTypeAllowed === undefined) {
         return <Navigate to="/" replace />;;
     }
     else {

@@ -2,6 +2,8 @@ import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { changeUserType } from './UserAPI';
 import { useState } from 'react';
+import PersonIcon from '@mui/icons-material/Person';
+import Avatar from '@mui/material/Avatar';
 
 const userTypes = ['STUDENT', 'TEACHER', 'ADMIN'];
 
@@ -34,7 +36,7 @@ export default function UserItem({ username, userType, onDeleteUser }) {
 
                 </select>
 
-                <IconButton aria-label="delete" sx={{ mx: 3 }} onClick={() => onDeleteUser(username)}>
+                <IconButton aria-label="delete" sx={{ mx: 3, color: 'red' }} onClick={() => onDeleteUser(username)}>
                     <DeleteIcon />
                 </IconButton>
             </div>

@@ -13,6 +13,7 @@ export const verifyUserCredentials = async (req, res, next) => {
     }).then((response) => {
         const data = response.data;
         req.user = data.user;
+        
         next();
     }).catch(error => {
        return next(error);

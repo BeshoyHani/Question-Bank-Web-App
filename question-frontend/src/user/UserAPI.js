@@ -23,7 +23,7 @@ export const getCurrentUser = async (username) => {
         return res.data.user;
     } catch (error) {
         console.log(error)
-        throw Error(error.response.data.error);
+        throw Error(error.response.data.error.message);
     }
 }
 
@@ -50,6 +50,7 @@ export const deleteUser = async (username) => {
         });
         return res.data.user;
     } catch (error) {
-        throw Error(error.response.data.error);
+        console.log(error.response.data)
+        throw Error(error.response.data.error.message);
     }
 }

@@ -1,14 +1,16 @@
 import axios from 'axios';
-axios.defaults.headers.Authorization = 'Bearer ' + localStorage.getItem('access_token') || '';
 const baseURL = 'http://localhost:4000/auth';
-
+axios.defaults.headers.Authorization = 'Bearer ' + localStorage.getItem('access_token');
 
 export const login = async (username, password) => {
     let res;
     try {
         const URL = baseURL + '/login';
-        res = await axios.post(URL, { username, password });
-        axios.defaults.headers.Authorization = res.data.token;
+        res = await axios.post(URL, { username, password }, {
+            headers: {
+                Authorization: 'Bearer ' + localStorage.getItem('access_token')
+            }
+        });
         localStorage.setItem('access_token', res.data.token);
         localStorage.setItem('user-type', res.data.userType);
         localStorage.setItem('username', res.data.username);
@@ -24,8 +26,11 @@ export const signup = async (username, userType, password) => {
     let res;
     try {
         const URL = baseURL + '/signup';
-        res = await axios.post(URL, { username, userType, password });
-        console.log(res)
+        res = await axios.post(URL, { username, userType, password }, {
+            headers: {
+                Authorization: 'Bearer ' + localStorage.getItem('access_token')
+            }
+        });
         return res.data;
     } catch (error) {
         throw Error(error.response.data.error.message);
